@@ -249,9 +249,9 @@ const Download = () => {
         <div className="max-w-6xl mx-auto px-4 py-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-full mb-4">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-green-400">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full mb-4">
+              <CheckCircle className="w-4 h-4 text-yellow-400" />
+              <span className="text-sm font-medium text-yellow-400">
                 Purchase Confirmed - Download Your Bundle
               </span>
             </div>
@@ -335,7 +335,7 @@ const Download = () => {
                               variant="outline"
                               size="sm"
                               className={`border-gray-600 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed ${
-                                isDownloaded ? 'border-green-500 text-green-400' : 'text-white'
+                                isDownloaded ? 'border-yellow-500 text-yellow-400' : 'text-white'
                               }`}
                             >
                               {isDownloading ? (
@@ -428,7 +428,7 @@ const Download = () => {
               </div>
               
               {downloadProgress === 100 && (
-                <div className="text-green-400 text-sm font-medium">
+                <div className="text-yellow-400 text-sm font-medium">
                   ✓ Download started! Check your downloads folder.
                 </div>
               )}

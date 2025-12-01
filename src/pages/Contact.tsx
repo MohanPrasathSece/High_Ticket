@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { Mail, Send } from "lucide-react";
+import { sendContactEmail } from "@/lib/contactService";
 
 const handleNavClick = (path: string) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -25,18 +26,24 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('📧 Sending contact form submission:', formData);
+      
+      // Send the contact form email
+      await sendContactEmail(formData);
       
       toast({
-        title: "Message Sent!",
-        description: "We'll get back to you soon.",
+        title: "Message Sent Successfully! 🎉",
+        description: "We've received your message and will respond within 24 hours.",
       });
 
+      // Reset form
       setFormData({ name: "", email: "", message: "" });
+      
     } catch (error) {
+      console.error('❌ Contact form error:', error);
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: "Sending Failed",
+        description: "Failed to send your message. Please try again or contact us directly at support@highticketsales.com",
         variant: "destructive",
       });
     } finally {

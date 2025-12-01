@@ -10,20 +10,32 @@ export interface OrderDetails {
 }
 
 /**
- * Send both buyer and admin emails using Netlify function
+ * Send both buyer and admin emails using appropriate endpoint
  */
 export const sendOrderEmails = async (orderDetails: OrderDetails): Promise<void> => {
     console.log('📧 Sending order confirmation emails...');
+    
+    // Determine the appropriate endpoint based on environment
+    const isDevelopment = import.meta.env.DEV;
+    const endpoint = isDevelopment 
+        ? '/api/send-email'  // For local development with Vite
+        : '/.netlify/functions/send-email';  // For Netlify production
+    
+    console.log('🌍 Environment:', isDevelopment ? 'Development' : 'Production');
+    console.log('📡 Using endpoint:', endpoint);
 
     try {
-        // Use the real Netlify function for email sending
-        const response = await fetch('/.netlify/functions/send-email', {
+        // Use the appropriate email endpoint
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(orderDetails),
         });
+
+        console.log('📡 Response status:', response.status);
+        console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
@@ -39,13 +51,13 @@ export const sendOrderEmails = async (orderDetails: OrderDetails): Promise<void>
             ...orderDetails,
             timestamp: Date.now(),
             emailSent: true,
-            emailResponse: result
+            emailResponse: result,
+            endpoint: endpoint
         });
         localStorage.setItem('orders', JSON.stringify(existingOrders));
         
     } catch (error) {
         console.error('❌ Error sending emails:', error);
-        // Fallback to mock implementation if Netlify function fails
         console.log('📧 Falling back to mock email implementation');
         
         try {
@@ -62,7 +74,8 @@ export const sendOrderEmails = async (orderDetails: OrderDetails): Promise<void>
             existingOrders.push({
                 ...orderDetails,
                 timestamp: Date.now(),
-                emailSent: 'mock_fallback'
+                emailSent: 'mock_fallback',
+                endpoint: 'mock'
             });
             localStorage.setItem('orders', JSON.stringify(existingOrders));
             

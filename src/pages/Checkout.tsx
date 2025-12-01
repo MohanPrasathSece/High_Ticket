@@ -22,7 +22,7 @@ const Checkout = () => {
     company: "",
     message: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "payoneer">("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay">("razorpay");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
@@ -65,8 +65,8 @@ const Checkout = () => {
         amount: total,
         orderBump: orderBump,
         paymentMethod: paymentMethod,
-        paymentId: response.razorpay_payment_id || response.payoneer_payment_id || 'PAY-' + Date.now(),
-        orderId: response.razorpay_order_id || response.payoneer_order_id || 'ORD-' + Date.now(),
+        paymentId: response.razorpay_payment_id || 'PAY-' + Date.now(),
+        orderId: response.razorpay_order_id || 'ORD-' + Date.now(),
         date: new Date().toLocaleString('en-US', {
           dateStyle: 'medium',
           timeStyle: 'short',
@@ -149,125 +149,6 @@ const Checkout = () => {
     }
   };
 
-  const handlePayoneerPayment = async () => {
-    try {
-      // Create Payoneer payment request
-      const payoneerData = {
-        amount: total,
-        currency: "USD",
-        description: "High-Ticket Sales Mastery Bundle" + (orderBump ? " + Script Pack" : ""),
-        customer: {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-        },
-        returnUrl: `${window.location.origin}/thank-you`,
-        cancelUrl: `${window.location.origin}/checkout`,
-      };
-
-      // Show Payoneer payment modal
-      console.log("Initiating Payoneer payment:", payoneerData);
-      
-      // Create a modal overlay for Payoneer payment
-      const modal = document.createElement('div');
-      modal.id = 'payoneer-modal';
-      modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
-      modal.innerHTML = `
-        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-white">Payoneer Payment</h3>
-            <button onclick="this.closest('#payoneer-modal').remove()" class="text-gray-400 hover:text-white">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-          
-          <div class="space-y-4">
-            <div class="text-center">
-              <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-              </div>
-              <h4 class="text-lg font-semibold text-white mb-2">Complete Payment</h4>
-              <p class="text-gray-300 text-sm mb-4">Amount: $${total} USD</p>
-            </div>
-            
-            <div class="bg-gray-800 rounded-lg p-4">
-              <div class="space-y-2 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Product:</span>
-                  <span class="text-white">High-Ticket Sales Mastery Bundle</span>
-                </div>
-                ${orderBump ? `
-                <div class="flex justify-between">
-                  <span class="text-gray-400">Order Bump:</span>
-                  <span class="text-white">Script Pack</span>
-                </div>
-                ` : ''}
-                <div class="flex justify-between font-semibold">
-                  <span class="text-white">Total:</span>
-                  <span class="text-yellow-400">$${total} USD</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="text-center">
-              <p class="text-xs text-gray-400 mb-4">This is a demo Payoneer payment flow</p>
-              <button 
-                onclick="window.payoneerSuccess()" 
-                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors"
-              >
-                Confirm Payment - $${total}
-              </button>
-              <button 
-                onclick="window.payoneerCancel()" 
-                class="w-full mt-2 border border-gray-600 text-gray-300 hover:bg-gray-800 font-semibold py-2 rounded-lg transition-colors"
-              >
-                Cancel Payment
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Add global functions for the modal buttons
-      (window as any).payoneerSuccess = () => {
-        modal.remove();
-        handlePaymentSuccess({
-          payoneer_payment_id: 'PAY-' + Date.now(),
-          payoneer_order_id: 'ORD-' + Date.now(),
-        });
-      };
-      
-      (window as any).payoneerCancel = () => {
-        modal.remove();
-        handlePaymentFailure();
-      };
-      
-      // Add modal to page
-      document.body.appendChild(modal);
-      
-      // Auto-close modal if user clicks outside
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.remove();
-          handlePaymentFailure();
-        }
-      });
-      
-    } catch (error) {
-      console.error("Payoneer error:", error);
-      toast({
-        title: "Payment Error",
-        description: "Failed to initialize Payoneer. Please try again.",
-        variant: "destructive",
-      });
-      setIsProcessing(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -284,12 +165,8 @@ const Checkout = () => {
         return;
       }
 
-      // Process payment based on selected method
-      if (paymentMethod === "razorpay") {
-        await handleRazorpayPayment();
-      } else if (paymentMethod === "payoneer") {
-        await handlePayoneerPayment();
-      }
+      // Process payment - only Razorpay now
+      await handleRazorpayPayment();
     } catch (error) {
       console.error("Payment processing error:", error);
       toast({
@@ -379,9 +256,9 @@ const Checkout = () => {
               {/* Left Column - Product Details */}
               <div className="space-y-6">
                 {/* Flash Sale Banner */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full">
-                  <AlertCircle className="w-4 h-4 text-red-400" />
-                  <span className="text-sm font-body font-semibold text-red-400">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full">
+                  <AlertCircle className="w-4 h-4 text-yellow-400" />
+                  <span className="text-sm font-body font-semibold text-yellow-400">
                     ⚡ FLASH SALE - 75% OFF - Only 8 Spots Left!
                   </span>
                 </div>
@@ -465,7 +342,7 @@ const Checkout = () => {
                       <p className="text-xs text-gray-400 mt-2">
                         {paymentMethod === "razorpay" 
                           ? "Processed securely in INR via Razorpay" 
-                          : "Processed securely in USD via Payoneer"
+                          : "Processed securely in INR via Razorpay"
                         }
                       </p>
                     </div>
@@ -543,42 +420,22 @@ const Checkout = () => {
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
                       <Label className="text-gray-300 font-body font-medium mb-3 block text-sm">Choose Payment Method</Label>
                       <div className="space-y-3">
-                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-yellow-400 transition-colors">
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-yellow-400 bg-yellow-400/10">
                           <input
                             type="radio"
                             name="paymentMethod"
                             value="razorpay"
-                            checked={paymentMethod === "razorpay"}
-                            onChange={(e) => setPaymentMethod(e.target.value as "razorpay" | "payoneer")}
+                            checked={true}
+                            disabled
                             className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
                           />
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="text-white font-medium">Razorpay</span>
-                              <span className="px-2 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-400 font-semibold">Popular</span>
+                              <span className="px-2 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs text-yellow-400 font-semibold">Popular</span>
                             </div>
                             <div className="text-xs text-gray-400 mt-1">
                               Pay in INR • UPI, Cards, NetBanking • Instant processing
-                            </div>
-                          </div>
-                        </label>
-                        
-                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-yellow-400 transition-colors">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="payoneer"
-                            checked={paymentMethod === "payoneer"}
-                            onChange={(e) => setPaymentMethod(e.target.value as "razorpay" | "payoneer")}
-                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-white font-medium">Payoneer</span>
-                              <span className="px-2 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-400 font-semibold">International</span>
-                            </div>
-                            <div className="text-xs text-gray-400 mt-1">
-                              Pay in USD • International cards, Wire transfer • Global customers
                             </div>
                           </div>
                         </label>
@@ -595,7 +452,7 @@ const Checkout = () => {
                         />
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="px-2 py-1 bg-red-500/20 border border-red-500/40 rounded-full text-xs font-body text-red-400 font-semibold animate-pulse">
+                            <span className="px-2 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs font-body text-yellow-400 font-semibold animate-pulse">
                               ONE-TIME OFFER - 75% OFF
                             </span>
                           </div>
@@ -653,7 +510,7 @@ const Checkout = () => {
                         </>
                       ) : (
                         <>
-                          🚀 Pay with {paymentMethod === "razorpay" ? "Razorpay" : "Payoneer"} — ${total} (₹{totalINR.toLocaleString()})
+                          🚀 Pay with Razorpay — $${total} (₹${totalINR.toLocaleString()})
                           <ArrowRight className="w-5 h-5 ml-2" />
                         </>
                       )}
@@ -681,9 +538,9 @@ const Checkout = () => {
           <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 max-w-md w-full mx-4">
             <div className="text-center">
               {/* Success Icon */}
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 {downloadStatus === 'completed' ? (
-                  <CheckCircle className="w-8 h-8 text-green-400" />
+                  <CheckCircle className="w-8 h-8 text-yellow-400" />
                 ) : (
                   <Download className="w-8 h-8 text-yellow-400 animate-pulse" />
                 )}
@@ -733,7 +590,7 @@ const Checkout = () => {
               </div>
               
               {downloadStatus === 'completed' && (
-                <div className="text-green-400 text-sm font-medium">
+                <div className="text-yellow-400 text-sm font-medium">
                   ✓ Download started! Check your downloads folder.
                 </div>
               )}

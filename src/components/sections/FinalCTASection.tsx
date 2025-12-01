@@ -36,8 +36,8 @@ const FinalCTASection = () => {
           {/* Main CTA content */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-red-500/10 border border-red-500/30 rounded-full mb-8 backdrop-blur-sm">
-              <Clock className="w-4 h-4 text-red-400" />
-              <span className="text-sm font-body font-semibold text-red-400">
+              <Clock className="w-4 h-4 text-yellow-400" />
+              <span className="text-sm font-body font-semibold text-yellow-400">
                 ⚠️ FINAL CHANCE - OFFER EXPIRES SOON
               </span>
             </div>
@@ -59,7 +59,7 @@ const FinalCTASection = () => {
             <div className="bg-slate-800/50 backdrop-blur-sm border border-red-500/30 rounded-3xl p-8 mb-12 max-w-2xl mx-auto">
               <div className="flex items-center justify-center gap-2 mb-6">
                 <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                <p className="text-lg font-body text-red-400 uppercase tracking-widest font-bold">
+                <p className="text-lg font-body text-yellow-400 uppercase tracking-widest font-bold">
                   🚨 PRICE INCREASES IN
                 </p>
               </div>
@@ -71,12 +71,12 @@ const FinalCTASection = () => {
           {/* Comparison section */}
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="bg-red-500/10 border border-red-500/30 rounded-3xl p-8">
-              <h3 className="text-2xl font-heading font-bold text-red-400 mb-6">If You Leave This Page</h3>
+              <h3 className="text-2xl font-heading font-bold text-yellow-400 mb-6">If You Leave This Page</h3>
               <div className="space-y-4">
                 {comparison.map((item, index) => (
                   <div key={index} className="flex items-center gap-4">
                     <div className="w-8 h-8 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center">
-                      <span className="text-red-400 font-bold">✗</span>
+                      <span className="text-yellow-400 font-bold">✗</span>
                     </div>
                     <div>
                       <p className="text-slate-400 font-body line-through">{item.before}</p>
@@ -85,7 +85,7 @@ const FinalCTASection = () => {
                 ))}
               </div>
               <div className="mt-6 bg-slate-800/50 rounded-xl p-4 text-center">
-                <div className="text-2xl font-heading font-bold text-red-400">$10K-20K</div>
+                <div className="text-2xl font-heading font-bold text-yellow-400">$10K-20K</div>
                 <p className="text-slate-400 font-body">Lost monthly</p>
               </div>
             </div>
@@ -159,7 +159,7 @@ const FinalCTASection = () => {
                 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-slate-400 font-body">
                   <span className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-green-400" />
+                    <ShieldCheck className="w-5 h-5 text-yellow-400" />
                     30-Day Money Back Guarantee
                   </span>
                   <span>•</span>

@@ -9,7 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "check-config": "node check-config.js"
+    "check-config": "node check-config.js",
+    "test-email": "node test-email.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -46,6 +47,7 @@
     "cmdk": "^1.1.1",
     "crypto-js": "^4.2.0",
     "date-fns": "^3.6.0",
+    "dotenv": "^17.2.3",
     "emailjs-com": "^3.2.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",

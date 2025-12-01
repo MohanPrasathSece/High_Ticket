@@ -11,8 +11,13 @@ interface OrderDetails {
 }
 
 const handler: Handler = async (event) => {
+  console.log('🚀 Send email function called');
+  console.log('HTTP Method:', event.httpMethod);
+  console.log('Headers:', JSON.stringify(event.headers, null, 2));
+  
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
+    console.log('❌ Method not allowed:', event.httpMethod);
     return {
       statusCode: 405,
       body: JSON.stringify({ error: 'Method not allowed' }),
@@ -20,17 +25,36 @@ const handler: Handler = async (event) => {
   }
 
   try {
+    console.log('📧 Parsing request body...');
     const orderDetails: OrderDetails = JSON.parse(event.body || '{}');
+    console.log('📋 Order details received:', JSON.stringify(orderDetails, null, 2));
 
     // Validate required fields
     if (!orderDetails.email || !orderDetails.name || !orderDetails.paymentId) {
+      console.log('❌ Missing required fields:', { email: !!orderDetails.email, name: !!orderDetails.name, paymentId: !!orderDetails.paymentId });
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Missing required fields' }),
       };
     }
 
+    // Check environment variables
+    console.log('🔍 Checking environment variables...');
+    console.log('GMAIL_USER exists:', !!process.env.GMAIL_USER);
+    console.log('GMAIL_APP_PASSWORD exists:', !!process.env.GMAIL_APP_PASSWORD);
+    console.log('ADMIN_EMAIL exists:', !!process.env.ADMIN_EMAIL);
+    console.log('VITE_SITE_URL:', process.env.VITE_SITE_URL);
+
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+      console.log('❌ Gmail credentials not configured');
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Email service not configured' }),
+      };
+    }
+
     // Create transporter with Gmail SMTP
+    console.log('📨 Creating email transporter...');
     const transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
@@ -40,6 +64,11 @@ const handler: Handler = async (event) => {
         pass: process.env.GMAIL_APP_PASSWORD,
       },
     });
+
+    // Test transporter connection
+    console.log('🔗 Testing transporter connection...');
+    await transporter.verify();
+    console.log('✅ Transporter connection successful');
 
     // Get site URL from environment
     const siteUrl = process.env.VITE_SITE_URL || 'https://your-site.netlify.app';
@@ -182,24 +211,24 @@ const handler: Handler = async (event) => {
     `;
 
     // Send email to buyer
-    await transporter.sendMail({
+    console.log('📤 Sending buyer email to:', orderDetails.email);
+    const buyerResult = await transporter.sendMail({
       from: `"High-Ticket Sales" <${process.env.GMAIL_USER}>`,
       to: orderDetails.email,
       subject: '🎉 Order Confirmed - High-Ticket Sales Bundle',
       html: buyerEmailHtml,
     });
-
-    console.log('✅ Buyer email sent to:', orderDetails.email);
+    console.log('✅ Buyer email sent successfully:', buyerResult.messageId);
 
     // Send email to admin
-    await transporter.sendMail({
+    console.log('📤 Sending admin email to:', process.env.ADMIN_EMAIL);
+    const adminResult = await transporter.sendMail({
       from: `"High-Ticket Sales System" <${process.env.GMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
       subject: `💰 New Order: ${orderDetails.name} - ₹${orderDetails.amount}`,
       html: adminEmailHtml,
     });
-
-    console.log('✅ Admin email sent to:', process.env.ADMIN_EMAIL);
+    console.log('✅ Admin email sent successfully:', adminResult.messageId);
 
     return {
       statusCode: 200,

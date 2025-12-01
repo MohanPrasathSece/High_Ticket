@@ -52,10 +52,10 @@ const ThankYou = () => {
           <div className="max-w-4xl mx-auto text-left">
             {/* Download Access Section */}
             {hasAccess && (
-              <div className="bg-green-500/10 border border-green-500/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 mb-8 sm:mb-12 relative z-10">
+              <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 mb-8 sm:mb-12 relative z-10">
                 <div className="flex items-center gap-3 mb-4">
-                  <CheckCircle className="w-8 h-8 text-green-400 flex-shrink-0" />
-                  <h2 className="text-xl sm:text-2xl font-heading font-bold text-green-400">
+                  <CheckCircle className="w-8 h-8 text-yellow-400 flex-shrink-0" />
+                  <h2 className="text-xl sm:text-2xl font-heading font-bold text-yellow-400">
                     Payment Confirmed - Download Your Bundle
                   </h2>
                 </div>
@@ -65,7 +65,7 @@ const ThankYou = () => {
                 <div className="flex flex-col sm:flex-row gap-4 items-center">
                   <Button
                     onClick={handleDownloadAccess}
-                    className="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg px-6 py-3 w-full sm:w-auto"
+                    className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg px-6 py-3 w-full sm:w-auto"
                   >
                     <Download className="w-5 h-5 mr-2" />
                     Download Complete Bundle (ZIP)
@@ -107,7 +107,7 @@ const ThankYou = () => {
             </div>
             <div className="flex flex-wrap gap-4 sm:gap-6 lg:gap-8 text-gray-400">
               <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
                 <span className="text-xs sm:text-sm">Instant Access</span>
               </div>
               <div className="flex items-center gap-2">
@@ -135,45 +135,45 @@ const ThankYou = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
-              <div className="bg-red-500/10 border border-red-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
-                <h3 className="text-xl sm:text-2xl font-heading font-bold text-red-400 mb-4 sm:mb-6">The Problem:</h3>
+              <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+                <h3 className="text-xl sm:text-2xl font-heading font-bold text-yellow-400 mb-4 sm:mb-6">The Problem:</h3>
                 <ul className="space-y-3 sm:space-y-4">
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-red-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Undercharging and feeling burnt out</span>
                   </li>
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-red-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Uncertain during sales conversations</span>
                   </li>
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-red-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Struggling to attract premium clients</span>
                   </li>
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-red-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Watching competitors close $2K–$10K deals</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="bg-green-500/10 border border-green-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
-                <h3 className="text-xl sm:text-2xl font-heading font-bold text-green-400 mb-4 sm:mb-6">The Solution:</h3>
+              <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+                <h3 className="text-xl sm:text-2xl font-heading font-bold text-yellow-400 mb-4 sm:mb-6">The Solution:</h3>
                 <ul className="space-y-3 sm:space-y-4">
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-green-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">A proven high-ticket closing framework</span>
                   </li>
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-green-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Complete confidence in every sales call</span>
                   </li>
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-green-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Authority positioning that attracts premium clients</span>
                   </li>
                   <li className="flex items-start gap-2 sm:gap-3">
-                    <span className="text-green-400 mt-1 text-sm sm:text-base">•</span>
+                    <span className="text-yellow-400 mt-1 text-sm sm:text-base">•</span>
                     <span className="text-white text-sm sm:text-base">Consistent $2,000+ sales on repeat</span>
                   </li>
                 </ul>
@@ -231,7 +231,7 @@ const ThankYou = () => {
 
               <div className="bg-gradient-to-r from-yellow-400/10 to-yellow-400/5 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-6">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 sm:px-3 py-1 bg-red-500/20 border border-red-500/40 rounded-full text-xs sm:text-sm font-body text-red-400 font-semibold">
+                  <span className="px-2 sm:px-3 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs sm:text-sm font-body text-yellow-400 font-semibold">
                     BONUS
                   </span>
                 </div>
@@ -320,8 +320,8 @@ const ThankYou = () => {
         {/* Final CTA */}
         <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-8 sm:mb-12">
-              <h2 className="text-xl sm:text-2xl font-heading font-bold text-red-400 mb-3 sm:mb-4">
+            <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-8 sm:mb-12">
+              <h2 className="text-xl sm:text-2xl font-heading font-bold text-yellow-400 mb-3 sm:mb-4">
                 Limited Time Offer Ends In: 14:55
               </h2>
             </div>

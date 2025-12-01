@@ -65,7 +65,7 @@ const HeroSection = () => {
               <div className="bg-slate-800/50 backdrop-blur-sm border border-gold/30 rounded-2xl p-6 mb-8 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  <p className="text-sm font-body text-red-400 uppercase tracking-widest font-semibold">
+                  <p className="text-sm font-body text-yellow-400 uppercase tracking-widest font-semibold">
                     ⚠️ Special Offer Expires In
                   </p>
                 </div>
@@ -86,7 +86,7 @@ const HeroSection = () => {
                 </Link>
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 text-sm text-slate-400 font-body">
                   <span className="flex items-center gap-1">
-                    <ShieldCheck className="w-4 h-4 text-green-400" />
+                    <ShieldCheck className="w-4 h-4 text-yellow-400" />
                     30-Day Money Back Guarantee
                   </span>
                   <span>•</span>

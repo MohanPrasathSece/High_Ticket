@@ -10,10 +10,9 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: "/", label: "Overview" },
-    { path: "/bundle", label: "Bundle" },
-    { path: "/contact", label: "Contact" },
-    { path: "/checkout", label: "Get Bundle" },
+    { path: "/bundle", label: "Features" },
+    { path: "/contact", label: "Support" },
+    { path: "/checkout", label: "Pricing" },
   ];
 
   const handleNavClick = (path: string) => {
@@ -64,7 +63,7 @@ const Navbar = () => {
           <div className="hidden md:block">
             <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
               <Button variant="gold" size="sm" className="group bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                Get Bundle
+                Get Started
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
@@ -103,7 +102,7 @@ const Navbar = () => {
             <div className="pt-2">
               <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
                 <Button variant="gold" size="sm" className="w-full group bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-                  Get Bundle
+                  Get Started
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>

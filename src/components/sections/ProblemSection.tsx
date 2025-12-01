@@ -43,8 +43,8 @@ const ProblemSection = () => {
           {/* Section header */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-red-500/10 border border-red-500/30 rounded-full mb-8 backdrop-blur-sm">
-              <AlertCircle className="w-4 h-4 text-red-400" />
-              <span className="text-sm font-body font-semibold text-red-400">
+              <AlertCircle className="w-4 h-4 text-yellow-400" />
+              <span className="text-sm font-body font-semibold text-yellow-400">
                 THE PAIN IS REAL (AND EXPENSIVE)
               </span>
             </div>
@@ -54,7 +54,7 @@ const ProblemSection = () => {
             </h2>
             <p className="text-xl text-slate-300 font-body max-w-3xl mx-auto leading-relaxed">
               The struggle is real, but it's costing you more than you think. 
-              <span className="text-red-400 font-semibold"> Every month you wait, you're losing thousands.</span>
+              <span className="text-yellow-400 font-semibold"> Every month you wait, you're losing thousands.</span>
             </p>
           </div>
 
@@ -67,7 +67,7 @@ const ProblemSection = () => {
               >
                 <div className="flex flex-col items-center text-center">
                   <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mb-4 group-hover:bg-red-500/20 transition-colors">
-                    <problem.icon className="w-8 h-8 text-red-400" />
+                    <problem.icon className="w-8 h-8 text-yellow-400" />
                   </div>
                   <h3 className="text-lg font-heading font-bold text-white mb-3">
                     {problem.title}
@@ -76,7 +76,7 @@ const ProblemSection = () => {
                     {problem.description}
                   </p>
                   <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
-                    <p className="text-xs font-body font-semibold text-red-400">
+                    <p className="text-xs font-body font-semibold text-yellow-400">
                       {problem.impact}
                     </p>
                   </div>
@@ -97,15 +97,15 @@ const ProblemSection = () => {
             </div>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-slate-800/50 rounded-xl p-6 text-center">
-                <div className="text-3xl font-heading font-bold text-red-400 mb-2">$2,000</div>
+                <div className="text-3xl font-heading font-bold text-yellow-400 mb-2">$2,000</div>
                 <p className="text-sm text-slate-400 font-body">Lost per high-ticket deal</p>
               </div>
               <div className="bg-slate-800/50 rounded-xl p-6 text-center">
-                <div className="text-3xl font-heading font-bold text-red-400 mb-2">5-10</div>
+                <div className="text-3xl font-heading font-bold text-yellow-400 mb-2">5-10</div>
                 <p className="text-sm text-slate-400 font-body">Deals lost monthly</p>
               </div>
               <div className="bg-slate-800/50 rounded-xl p-6 text-center">
-                <div className="text-3xl font-heading font-bold text-red-400 mb-2">$10K-20K</div>
+                <div className="text-3xl font-heading font-bold text-yellow-400 mb-2">$10K-20K</div>
                 <p className="text-sm text-slate-400 font-body">Total monthly loss</p>
               </div>
             </div>
