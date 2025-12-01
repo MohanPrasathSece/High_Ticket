@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/components/ui/use-toast";
-import { Loader2, Lock, Shield, AlertCircle, CreditCard, ArrowRight, Star } from "lucide-react";
+import { Loader2, Lock, Shield, AlertCircle, CreditCard, ArrowRight, Star, Download, CheckCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { initiateRazorpayPayment, RazorpayResponse } from "@/lib/razorpay";
@@ -23,6 +23,9 @@ const Checkout = () => {
     message: "",
   });
   const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "payoneer">("razorpay");
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
 
   const basePrice = 147;
   const bumpPrice = 37;
@@ -78,18 +81,26 @@ const Checkout = () => {
         // Don't block the payment flow if emails fail
       }
 
-      toast({
-        title: "Payment Successful!",
-        description: "Thank you for your purchase. Redirecting to download page...",
-      });
+      // Show success modal and auto-download
+      showDownloadSuccessModal();
+      
+      // Auto-download the bundle
+      setTimeout(() => {
+        autoDownloadBundle();
+      }, 2000);
 
-      // Redirect to thank you page with payment details
-      navigate(`/thank-you?paymentId=${orderDetails.paymentId}&email=${encodeURIComponent(formData.email)}`);
+      // Store session for download access
+      sessionStorage.setItem('purchaseSession', JSON.stringify({
+        email: formData.email,
+        paymentId: orderDetails.paymentId,
+        timestamp: Date.now()
+      }));
+
     } catch (error) {
       console.error("Error processing payment success:", error);
       toast({
         title: "Processing Error",
-        description: "Payment was successful but there was an error sending confirmation. Please contact support.",
+        description: "Payment was successful but there was an error. Please contact support.",
         variant: "destructive",
       });
     } finally {
@@ -298,6 +309,57 @@ const Checkout = () => {
       description: "Your payment was not completed. Please try again.",
       variant: "destructive",
     });
+  };
+
+  const showDownloadSuccessModal = () => {
+    setShowDownloadModal(true);
+    setDownloadProgress(0);
+    setDownloadStatus('preparing');
+    
+    // Simulate preparation progress
+    const progressInterval = setInterval(() => {
+      setDownloadProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+        return prev + 20;
+      });
+    }, 300);
+  };
+
+  const autoDownloadBundle = () => {
+    setDownloadStatus('downloading');
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.href = '/bundle.zip';
+    link.download = 'bundle.zip';
+    link.style.display = 'none';
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    
+    // Clean up
+    setTimeout(() => {
+      if (document.body.contains(link)) {
+        document.body.removeChild(link);
+      }
+    }, 100);
+    
+    // Show completed status
+    setTimeout(() => {
+      setDownloadStatus('completed');
+      setDownloadProgress(100);
+      
+      // Close modal after 3 seconds
+      setTimeout(() => {
+        setShowDownloadModal(false);
+        // Navigate to thank you page
+        navigate('/thank-you');
+      }, 3000);
+    }, 2000);
   };
 
   return (
@@ -612,6 +674,79 @@ const Checkout = () => {
         </div>
       </main>
       <FooterSection />
+      
+      {/* Download Success Modal */}
+      {showDownloadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 max-w-md w-full mx-4">
+            <div className="text-center">
+              {/* Success Icon */}
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                {downloadStatus === 'completed' ? (
+                  <CheckCircle className="w-8 h-8 text-green-400" />
+                ) : (
+                  <Download className="w-8 h-8 text-yellow-400 animate-pulse" />
+                )}
+              </div>
+              
+              <h3 className="text-xl font-bold text-white mb-2">
+                {downloadStatus === 'preparing' && 'Preparing Your Bundle...'}
+                {downloadStatus === 'downloading' && 'Downloading Bundle...'}
+                {downloadStatus === 'completed' && 'Download Complete!'}
+              </h3>
+              
+              <p className="text-gray-300 mb-6">
+                {downloadStatus === 'preparing' && 'Your High-Ticket Sales Mastery bundle is being prepared...'}
+                {downloadStatus === 'downloading' && 'Your bundle is downloading to your device...'}
+                {downloadStatus === 'completed' && 'bundle.zip has been downloaded to your device!'}
+              </p>
+              
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      downloadStatus === 'completed' ? 'bg-green-400' : 'bg-yellow-400'
+                    }`}
+                    style={{ width: `${downloadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-400 mt-2">{downloadProgress}% Complete</p>
+              </div>
+              
+              {/* Download Details */}
+              <div className="bg-gray-800 rounded-lg p-4 mb-6">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">File:</span>
+                    <span className="text-white">bundle.zip</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Size:</span>
+                    <span className="text-white">12.5 MB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Contents:</span>
+                    <span className="text-white">16 files</span>
+                  </div>
+                </div>
+              </div>
+              
+              {downloadStatus === 'completed' && (
+                <div className="text-green-400 text-sm font-medium">
+                  ✓ Download started! Check your downloads folder.
+                </div>
+              )}
+              
+              {downloadStatus === 'downloading' && (
+                <div className="text-yellow-400 text-sm font-medium">
+                  ⬇️ Download in progress...
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

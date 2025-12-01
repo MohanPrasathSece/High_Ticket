@@ -4,14 +4,14 @@ import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download as DownloadIcon, FileText, Book, CheckCircle, ArrowRight, Mail, Shield, Clock } from "lucide-react";
+import { Download as DownloadIcon, FileText, Book, CheckCircle, ArrowRight, Mail, Shield, Clock, Archive } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
 interface BundleFile {
   name: string;
   displayName: string;
   description: string;
-  type: "pdf" | "docx";
+  type: "pdf" | "docx" | "zip";
   size: string;
   category: string;
 }
@@ -21,137 +21,20 @@ const Download = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [downloadedFiles, setDownloadedFiles] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [isDownloading, setIsDownloading] = useState(false);
   const navigate = useNavigate();
 
-  // Bundle files configuration
+  // Bundle files configuration - only ZIP file
   const bundleFiles: BundleFile[] = [
     {
-      name: "High-Ticket Affiliate Marketing - Book.pdf",
-      displayName: "Complete Guide Book",
-      description: "Comprehensive high-ticket affiliate marketing strategies",
-      type: "pdf",
-      size: "1.9 MB",
-      category: "Main Content"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Book.docx",
-      displayName: "Complete Guide Book (Editable)",
-      description: "Editable version of the complete guide",
-      type: "docx",
-      size: "3.0 MB",
-      category: "Main Content"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Guide 1_3.pdf",
-      displayName: "Part 1: Foundation Guide",
-      description: "Building your high-ticket affiliate foundation",
-      type: "pdf",
-      size: "289 KB",
-      category: "Guides"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Guide 1_3.docx",
-      displayName: "Part 1: Foundation Guide (Editable)",
-      description: "Editable foundation guide",
-      type: "docx",
-      size: "1.6 MB",
-      category: "Guides"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Guide 2_3.pdf",
-      displayName: "Part 2: Advanced Strategies",
-      description: "Advanced affiliate marketing techniques",
-      type: "pdf",
-      size: "292 KB",
-      category: "Guides"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Guide 2_3.docx",
-      displayName: "Part 2: Advanced Strategies (Editable)",
-      description: "Editable advanced strategies guide",
-      type: "docx",
-      size: "1.6 MB",
-      category: "Guides"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Guide 3_3.pdf",
-      displayName: "Part 3: Scaling & Automation",
-      description: "Scale your affiliate business effectively",
-      type: "pdf",
-      size: "379 KB",
-      category: "Guides"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Guide 3_3.docx",
-      displayName: "Part 3: Scaling & Automation (Editable)",
-      description: "Editable scaling and automation guide",
-      type: "docx",
-      size: "1.7 MB",
-      category: "Guides"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Checklist.pdf",
-      displayName: "Success Checklist",
-      description: "Step-by-step implementation checklist",
-      type: "pdf",
-      size: "160 KB",
-      category: "Resources"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Checklist.docx",
-      displayName: "Success Checklist (Editable)",
-      description: "Editable implementation checklist",
-      type: "docx",
-      size: "1.6 MB",
-      category: "Resources"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Prompts.pdf",
-      displayName: "AI Prompts Pack",
-      description: "Ready-to-use AI prompts for marketing",
-      type: "pdf",
-      size: "111 KB",
-      category: "Resources"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Prompts.docx",
-      displayName: "AI Prompts Pack (Editable)",
-      description: "Editable AI prompts collection",
-      type: "docx",
-      size: "1.6 MB",
-      category: "Resources"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Toolstack.pdf",
-      displayName: "Recommended Tools",
-      description: "Complete toolstack recommendations",
-      type: "pdf",
-      size: "65 KB",
-      category: "Resources"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Toolstack.docx",
-      displayName: "Recommended Tools (Editable)",
-      description: "Editable tools and resources list",
-      type: "docx",
-      size: "1.6 MB",
-      category: "Resources"
-    },
-    {
-      name: "High-Ticket Affiliate Marketing - Workbook.pdf",
-      displayName: "Implementation Workbook",
-      description: "Practical exercises and worksheets",
-      type: "pdf",
-      size: "204 KB",
-      category: "Workbook"
-    },
-    {
-      name: "workbook2.docx",
-      displayName: "Advanced Workbook",
-      description: "Additional exercises and templates",
-      type: "docx",
-      size: "1.7 MB",
-      category: "Workbook"
+      name: "bundle.zip",
+      displayName: "Complete Bundle (All Files)",
+      description: "Download all 16 files in a single ZIP package",
+      type: "zip",
+      size: "12.5 MB",
+      category: "Complete Bundle"
     }
   ];
 
@@ -197,27 +80,102 @@ const Download = () => {
 
   const handleDownload = async (fileName: string) => {
     try {
-      // Mark file as downloaded
+      // Prevent multiple downloads
+      if (isDownloading || downloadedFiles.has(fileName)) {
+        if (downloadedFiles.has(fileName)) {
+          toast({
+            title: "Already Downloaded",
+            description: "This file has already been downloaded.",
+          });
+        }
+        return;
+      }
+      
+      // Set downloading state
+      setIsDownloading(true);
+      
+      // Show download modal
+      setShowDownloadModal(true);
+      setDownloadProgress(0);
+      
+      // Simulate preparation progress
+      for (let i = 0; i <= 100; i += 20) {
+        setDownloadProgress(i);
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      // Mark file as downloaded FIRST to prevent multiple clicks
       setDownloadedFiles(prev => new Set([...prev, fileName]));
       
-      // Initiate download
+      // For ZIP file, trigger automatic download
+      if (fileName === 'bundle.zip') {
+        // Create a single download link
+        const downloadUrl = '/bundle.zip';
+        
+        // Use a direct approach to prevent multiple windows
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = 'bundle.zip';
+        link.style.display = 'none';
+        
+        // Add to DOM, click once, and immediately remove
+        document.body.appendChild(link);
+        link.click();
+        
+        // Remove immediately to prevent multiple triggers
+        setTimeout(() => {
+          if (document.body.contains(link)) {
+            document.body.removeChild(link);
+          }
+        }, 100);
+        
+        // Show completion message
+        setDownloadProgress(100);
+        
+        // Close modal after 2 seconds
+        setTimeout(() => {
+          setShowDownloadModal(false);
+          setIsDownloading(false);
+          toast({
+            title: "Download Complete",
+            description: "bundle.zip has been downloaded to your device.",
+          });
+        }, 2000);
+        
+        return;
+      }
+      
+      // Fallback for other files (if any)
       const response = await fetch(`/bundle/${fileName}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: File not found`);
+      }
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
+      a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
-      toast({
-        title: "Download Started",
-        description: `${fileName} is being downloaded.`,
-      });
+      // Close modal after 2 seconds
+      setTimeout(() => {
+        setShowDownloadModal(false);
+        setIsDownloading(false);
+        toast({
+          title: "Download Complete",
+          description: `${fileName} has been downloaded to your device.`,
+        });
+      }, 2000);
+      
     } catch (error) {
       console.error('Download error:', error);
+      setShowDownloadModal(false);
+      setIsDownloading(false);
       toast({
         title: "Download Failed",
         description: "Failed to download file. Please try again.",
@@ -227,19 +185,21 @@ const Download = () => {
   };
 
   const handleDownloadAll = async () => {
-    toast({
-      title: "Downloading All Files",
-      description: "Starting download of all bundle files...",
-    });
-    
-    for (const file of bundleFiles) {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between downloads
-      handleDownload(file.name);
-    }
+    // Since we only have one file, just download the ZIP
+    await handleDownload('bundle.zip');
   };
 
-  const getFileIcon = (type: "pdf" | "docx") => {
-    return type === "pdf" ? FileText : Book;
+  const getFileIcon = (type: "pdf" | "docx" | "zip") => {
+    switch (type) {
+      case "pdf":
+        return FileText;
+      case "docx":
+        return Book;
+      case "zip":
+        return Archive;
+      default:
+        return DownloadIcon;
+    }
   };
 
   if (isLoading) {
@@ -299,18 +259,33 @@ const Download = () => {
               High-Ticket Sales Mastery <span className="text-yellow-400">Bundle</span>
             </h1>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
-              Download your complete bundle with 16 files including guides, workbooks, checklists, and resources.
+              Download your complete bundle with all 16 files in a single ZIP package.
             </p>
           </div>
 
           {/* Download All Button */}
           <div className="text-center mb-8">
             <Button 
-              onClick={handleDownloadAll}
-              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg px-8 py-3"
+              onClick={() => handleDownload('bundle.zip')}
+              disabled={isDownloading || downloadedFiles.has('bundle.zip')}
+              className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Download className="w-5 h-5 mr-2" />
-              Download All Files (16 Total)
+              {isDownloading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
+                  Downloading...
+                </>
+              ) : downloadedFiles.has('bundle.zip') ? (
+                <>
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  Downloaded
+                </>
+              ) : (
+                <>
+                  <Download className="w-5 h-5 mr-2" />
+                  Download Complete Bundle (ZIP)
+                </>
+              )}
             </Button>
           </div>
 
@@ -356,20 +331,23 @@ const Download = () => {
                             </span>
                             <Button
                               onClick={() => handleDownload(file.name)}
+                              disabled={isDownloading || isDownloaded}
                               variant="outline"
                               size="sm"
-                              className={`border-gray-600 hover:bg-gray-800 ${
+                              className={`border-gray-600 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed ${
                                 isDownloaded ? 'border-green-500 text-green-400' : 'text-white'
                               }`}
                             >
-                              {isDownloaded ? (
+                              {isDownloading ? (
+                                <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin mr-1" />
+                              ) : isDownloaded ? (
                                 <>
                                   <CheckCircle className="w-3 h-3 mr-1" />
                                   Downloaded
                                 </>
                               ) : (
                                 <>
-                                  <Download className="w-3 h-3 mr-1" />
+                                  <DownloadIcon className="w-3 h-3 mr-1" />
                                   Download
                                 </>
                               )}
@@ -406,6 +384,58 @@ const Download = () => {
         </div>
       </main>
       <FooterSection />
+      
+      {/* Download Modal */}
+      {showDownloadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 max-w-md w-full mx-4">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Download className="w-8 h-8 text-yellow-400 animate-pulse" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Preparing Your Download</h3>
+              <p className="text-gray-300 mb-6">
+                Your High-Ticket Sales Mastery bundle is being prepared for download...
+              </p>
+              
+              {/* Progress Bar */}
+              <div className="mb-4">
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="bg-yellow-400 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${downloadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-400 mt-2">{downloadProgress}% Complete</p>
+              </div>
+              
+              {/* Download Details */}
+              <div className="bg-gray-800 rounded-lg p-4 mb-6">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">File:</span>
+                    <span className="text-white">bundle.zip</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Size:</span>
+                    <span className="text-white">12.5 MB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Contents:</span>
+                    <span className="text-white">16 files</span>
+                  </div>
+                </div>
+              </div>
+              
+              {downloadProgress === 100 && (
+                <div className="text-green-400 text-sm font-medium">
+                  ✓ Download started! Check your downloads folder.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

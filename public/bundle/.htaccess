@@ -1,5 +1,5 @@
 # Enable file downloads for bundle files
-<FilesMatch "\.(pdf|docx)$">
+<FilesMatch "\.(pdf|docx|zip)$">
     Header set Content-Disposition "attachment"
     Header set Content-Type "application/octet-stream"
 </FilesMatch>
@@ -14,6 +14,7 @@
 # Set proper MIME types
 AddType application/pdf .pdf
 AddType application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx
+AddType application/zip .zip
 
 # Enable CORS for downloads
 <IfModule mod_headers.c>

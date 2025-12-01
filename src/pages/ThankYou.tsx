@@ -68,13 +68,13 @@ const ThankYou = () => {
                     className="bg-green-500 hover:bg-green-600 text-white font-semibold text-lg px-6 py-3 w-full sm:w-auto"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Download All Bundle Files (16 Total)
+                    Download Complete Bundle (ZIP)
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                   <div className="text-sm text-gray-400 text-center sm:text-left">
-                    <p>✅ Complete guides and workbooks</p>
-                    <p>✅ Checklists and templates</p>
-                    <p>✅ AI prompts and toolstack</p>
+                    <p>✅ Complete ZIP bundle (12.5 MB)</p>
+                    <p>✅ All 16 files included</p>
+                    <p>✅ Both PDF and DOCX formats</p>
                     <p>✅ Lifetime access to all updates</p>
                   </div>
                 </div>
