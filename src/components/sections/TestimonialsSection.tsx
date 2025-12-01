@@ -65,7 +65,7 @@ const TestimonialsSection = () => {
       {/* Background effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/3 left-1/4 w-[800px] h-[800px] bg-gold/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+        <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-gray-800/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
       </div>
 
       <div className="relative z-10 container mx-auto px-4">

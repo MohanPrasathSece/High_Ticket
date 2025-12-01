@@ -17,8 +17,8 @@ const HeroSection = () => {
       {/* Animated background effects */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-gradient-gold opacity-10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-blue-500 opacity-5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
-        <div className="absolute bottom-1/4 left-1/4 w-[800px] h-[800px] bg-purple-500 opacity-5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "4s" }} />
+        <div className="absolute top-1/3 right-1/4 w-[600px] h-[600px] bg-gray-800 opacity-5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+        <div className="absolute bottom-1/4 left-1/4 w-[800px] h-[800px] bg-gray-900 opacity-5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "4s" }} />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
       </div>
 

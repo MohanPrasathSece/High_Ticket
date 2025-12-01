@@ -47,7 +47,7 @@ const Overview = () => {
                 <span className="text-xs sm:text-sm">500+ Users</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-blue-400" />
+                <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                 <span className="text-xs sm:text-sm">30-Day Guarantee</span>
               </div>
             </div>
