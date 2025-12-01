@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+@layer base {
+  :root {
+    /* Luxury Dark Color Palette */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+
+    /* Soft Gold - Primary accent */
+    --primary: 44 53% 55%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Deep Charcoal - Section backgrounds */
+    --secondary: 0 0% 7%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Soft Grey - Neutral blocks */
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 40%;
+
+    /* Rich Slate Black */
+    --accent: 0 0% 11%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 44 53% 55%;
+
+    --radius: 0.75rem;
+
+    /* Custom luxury tokens */
+    --gold: 44 53% 55%;
+    --gold-light: 44 60% 65%;
+    --gold-dark: 44 50% 45%;
+    --pure-black: 0 0% 0%;
+    --deep-charcoal: 0 0% 7%;
+    --pure-white: 0 0% 100%;
+    --soft-grey: 0 0% 97%;
+    --rich-slate: 0 0% 11%;
+
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(44 53% 55%), hsl(44 60% 65%));
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 0%), hsl(0 0% 7%));
+    --gradient-hero: linear-gradient(180deg, hsl(0 0% 11%), hsl(0 0% 0%));
+
+    /* Shadows */
+    --shadow-gold: 0 0 40px hsl(44 53% 55% / 0.3);
+    --shadow-card: 0 20px 50px hsl(0 0% 0% / 0.5);
+    --shadow-button: 0 8px 30px hsl(44 53% 55% / 0.4);
+
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 44 53% 55%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 11%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 44 53% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+  }
+
+  .bg-gradient-dark {
+    background: linear-gradient(180deg, hsl(var(--pure-black)), hsl(var(--deep-charcoal)));
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(180deg, hsl(var(--rich-slate)), hsl(var(--pure-black)));
+  }
+
+  .border-gold {
+    border-color: hsl(var(--gold));
+  }
+
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+
+  .shadow-button {
+    box-shadow: var(--shadow-button);
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 60px hsl(var(--gold) / 0.4), 0 0 100px hsl(var(--gold) / 0.2);
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--gold) / 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--gold) / 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-gold {
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--gold) / 0) 0%,
+    hsl(var(--gold) / 0.3) 50%,
+    hsl(var(--gold) / 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s ease-out forwards;
+}
