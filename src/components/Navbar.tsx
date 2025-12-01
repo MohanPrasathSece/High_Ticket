@@ -15,13 +15,26 @@ const Navbar = () => {
     { path: "/checkout", label: "Get Started" },
   ];
 
+  const handleNavClick = (path: string) => {
+    // Close mobile menu if open
+    setIsMenuOpen(false);
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLogoClick = () => {
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <h1 className="text-xl font-heading font-bold text-foreground">
+          <Link to="/" className="flex items-center" onClick={handleLogoClick}>
+            <h1 className="text-lg font-heading font-bold text-foreground">
               <span className="text-gradient-gold">High-Ticket</span> Sales
             </h1>
           </Link>
@@ -34,6 +47,7 @@ const Navbar = () => {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => handleNavClick(item.path)}
                   className={`font-body text-sm transition-colors ${
                     isActive(item.path)
                       ? "text-gold font-semibold"
@@ -74,17 +88,17 @@ const Navbar = () => {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={() => handleNavClick(item.path)}
                 className={`block font-body text-sm transition-colors py-2 ${
                   isActive(item.path)
                     ? "text-gold font-semibold"
                     : "text-foreground/70 hover:text-foreground"
                 }`}
-                onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}
               </Link>
             ))}
-            <Link to="/checkout" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
               <Button variant="gold" size="sm" className="w-full group">
                 Get Started
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
