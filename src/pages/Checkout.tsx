@@ -1,15 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import TrustBadge from "@/components/TrustBadge";
-import CurrencyBanner from "@/components/CurrencyBanner";
+import { toast } from "@/components/ui/use-toast";
+import { Loader2, Lock, Shield, AlertCircle, CreditCard, ArrowRight, Star } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
-import { Lock, Shield, Loader2, ArrowLeft, Home, ShoppingBag } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
 import { initiateRazorpayPayment, RazorpayResponse } from "@/lib/razorpay";
 import { sendOrderEmails } from "@/lib/emailService";
 
@@ -20,6 +18,9 @@ const Checkout = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
+    company: "",
+    message: "",
   });
 
   const basePrice = 147;
@@ -32,6 +33,21 @@ const Checkout = () => {
   const bumpPriceINR = bumpPrice * usdToInrRate;
   const totalINR = total * usdToInrRate;
 
+  const features = [
+    { icon: CreditCard, text: "High-Ticket Sales Worksheet" },
+    { icon: CreditCard, text: "High-Ticket Foundations Guidebook" },
+    { icon: CreditCard, text: "Sales Funnel Blueprint" },
+    { icon: CreditCard, text: "Authority-Building Action Plan" },
+    { icon: CreditCard, text: "Toolstack Prompts Pack" },
+    { icon: CreditCard, text: "BONUS: Messenger Conversion Scripts" },
+  ];
+
+  const testimonials = [
+    { name: "Sarah Mitchell", text: "Brand Strategist" },
+    { name: "Marcus Thompson", text: "Business Coach" },
+    { name: "Jennifer Park", text: "Marketing Consultant" },
+  ];
+
   const handlePaymentSuccess = async (response: RazorpayResponse) => {
     console.log("✅ Payment successful:", response);
 
@@ -43,7 +59,7 @@ const Checkout = () => {
         name: formData.name,
         email: formData.email,
         amount: total,
-        orderBump,
+        orderBump: orderBump,
         paymentId: response.razorpay_payment_id,
         orderId: response.razorpay_order_id,
         date: new Date().toLocaleString('en-US', {
@@ -56,43 +72,26 @@ const Checkout = () => {
       await sendOrderEmails(orderDetails);
 
       toast({
-        title: "Payment Successful! 🎉",
-        description: "Check your email for order confirmation and access details.",
+        title: "Payment Successful!",
+        description: "Thank you for your purchase. Check your email for access details.",
       });
 
-      // Navigate to thank you page
-      setTimeout(() => {
-        navigate("/thank-you", {
-          state: {
-            orderBump,
-            paymentId: response.razorpay_payment_id,
-            orderDetails
-          }
-        });
-      }, 1500);
+      // Redirect to thank you page
+      navigate("/thank-you");
     } catch (error) {
-      console.error("Error processing order:", error);
+      console.error("Error processing payment success:", error);
       toast({
-        title: "Payment Successful",
-        description: "But there was an issue sending confirmation email. We'll send it shortly.",
-        variant: "default",
+        title: "Processing Error",
+        description: "Payment was successful but there was an error sending confirmation. Please contact support.",
+        variant: "destructive",
       });
-
-      // Still navigate to thank you page
-      setTimeout(() => {
-        navigate("/thank-you", {
-          state: {
-            orderBump,
-            paymentId: response.razorpay_payment_id
-          }
-        });
-      }, 1500);
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handlePaymentFailure = () => {
+    console.log("❌ Payment failed or cancelled");
     setIsProcessing(false);
     toast({
       title: "Payment Cancelled",
@@ -105,10 +104,10 @@ const Checkout = () => {
     e.preventDefault();
 
     // Validate form
-    if (!formData.name || !formData.email) {
+    if (!formData.name || !formData.email || !formData.phone) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please fill in all required fields (name, email, and phone).",
         variant: "destructive",
       });
       return;
@@ -132,6 +131,9 @@ const Checkout = () => {
         {
           name: formData.name,
           email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          message: formData.message,
           amount: total,
           orderBump,
         },
@@ -143,7 +145,7 @@ const Checkout = () => {
       setIsProcessing(false);
       toast({
         title: "Payment Error",
-        description: "Failed to initiate payment. Please try again.",
+        description: "Unable to initiate payment. Please try again.",
         variant: "destructive",
       });
     }
@@ -152,209 +154,208 @@ const Checkout = () => {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-16">
-        {/* Background effects */}
+      <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pt-16">
+        {/* Animated background */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/3 left-1/4 w-[800px] h-[800px] bg-gold/5 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-gold/5 via-transparent to-blue-500/5" />
+          <div className="absolute top-1/4 left-1/4 w-[800px] h-[800px] bg-gold/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "3s" }} />
         </div>
 
-        <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            {/* Navigation header */}
-            <div className="flex items-center justify-between mb-8">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate(-1)}
-                className="border-gold/30 hover:bg-gold/10 text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
-              </Button>
-              <h1 className="text-xl md:text-2xl font-heading font-bold text-white">
-                <span className="text-gradient-gold">High-Ticket</span> Sales Bundle
-              </h1>
-            </div>
-
-            {/* Trust badges */}
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
-              <TrustBadge type="secure" />
-              <TrustBadge type="encrypted" />
-              <TrustBadge type="guarantee" />
-            </div>
-
-            {/* Urgency banner */}
-            <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 mb-8 text-center">
-              <div className="flex items-center justify-center gap-2">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <p className="text-red-400 font-body font-semibold">
-                  ⚠️ LIMITED TIME: 75% OFF - Only 12 spots remaining!
-                </p>
+        <div className="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 py-8">
+          <div className="w-full max-w-4xl">
+            {/* Header */}
+            <div className="text-center mb-6 sm:mb-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-4 sm:py-2 bg-red-500/10 border border-red-500/30 rounded-full mb-3 sm:mb-4">
+                <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4 text-red-400" />
+                <span className="text-xs sm:text-sm font-body font-semibold text-red-400">
+                  ⚡ FLASH SALE - 75% OFF - Only 8 Spots Left!
+                </span>
               </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-white mb-3 sm:mb-4 leading-tight">
+                Stop Chasing Low-Ticket Clients.
+                <br className="hidden sm:block" />
+                <span className="text-yellow-400">Start Closing $2,000+</span>
+                <br className="hidden sm:block" />
+                <span className="text-yellow-400">High-Ticket Clients</span>
+                <br className="hidden sm:block" />
+                Consistently.
+              </h1>
+              <p className="text-base sm:text-lg text-gray-300 font-body max-w-2xl mx-auto px-2">
+                The proven, results-based framework used by <span className="text-yellow-400 font-semibold">500+ professionals</span> to create consistent five-figure days.
+              </p>
             </div>
 
-            {/* Currency banner - only show once */}
-            <CurrencyBanner />
-
-            {/* Checkout card */}
-            <div className="bg-slate-800/80 backdrop-blur-xl border border-slate-700 rounded-3xl shadow-2xl overflow-hidden">
-              {/* Order summary header */}
-              <div className="bg-gradient-to-r from-gold/10 to-gold/5 p-6 md:p-8 border-b border-slate-700">
-                <h2 className="text-xl md:text-2xl font-heading font-bold text-white mb-6">
-                  Order Summary
-                </h2>
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
-                  <div className="flex-1">
-                    <p className="font-body font-semibold text-white text-lg">
-                      Ultimate High-Ticket Sales Bundle
-                    </p>
-                    <p className="text-sm text-slate-400 font-body">
-                      Complete system + Bonus Scripts
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-gold/10 border border-gold/30 rounded-full text-xs font-body text-gold">
-                        Instant Access
-                      </span>
-                      <span className="px-2 py-1 bg-gold/10 border border-gold/30 rounded-full text-xs font-body text-gold">
-                        30-Day Guarantee
-                      </span>
-                      <span className="px-2 py-1 bg-gold/10 border border-gold/30 rounded-full text-xs font-body text-gold">
-                        Premium Support
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="bg-slate-900/50 rounded-lg px-4 py-2">
-                      <span className="text-2xl md:text-3xl font-heading font-bold text-gold">
-                        ${basePrice} <span className="text-sm text-slate-400 font-normal">(~₹{basePriceINR.toLocaleString()})</span>
-                      </span>
-                    </div>
-                  </div>
+            {/* Simple Checkout Card */}
+            <div className="bg-gray-900 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
+              {/* Trust badges */}
+              <div className="flex justify-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+                <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-400">
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+                  <span className="hidden sm:inline">Secure</span>
+                  <span className="sm:hidden">🔒</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-400">
+                  <Lock className="w-3 h-3 sm:w-4 sm:h-4 text-blue-400" />
+                  <span className="hidden sm:inline">Encrypted</span>
+                  <span className="sm:hidden">🔐</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-400">
+                  <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400" />
+                  <span className="hidden sm:inline">Guarantee</span>
+                  <span className="sm:hidden">⭐</span>
                 </div>
               </div>
 
-              {/* Order bump */}
-              <div className="p-6 md:p-8 border-b border-slate-700 bg-gradient-to-r from-gold/5 to-transparent">
-                <label className="flex items-start gap-4 cursor-pointer group">
-                  <Checkbox
-                    checked={orderBump}
-                    onCheckedChange={(checked) => setOrderBump(checked as boolean)}
-                    className="mt-1 border-gold data-[state=checked]:bg-gold data-[state=checked]:border-gold"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full text-xs font-body text-red-400 font-semibold animate-pulse">
-                        ONE-TIME OFFER - SAVE 75%
-                      </span>
-                    </div>
-                    <p className="font-body font-semibold text-white mb-2">
-                      Yes — Add the Advanced Outreach Script Pack for just $37 <span className="text-sm text-slate-400 font-normal">(~₹{bumpPriceINR.toLocaleString()})</span>
-                    </p>
-                    <p className="text-sm text-slate-400 font-body mb-3">
-                      DM, email, and call-opening scripts that help book high-intent prospects within 24 hours.
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <span className="px-2 py-1 bg-blue-10 border border-blue-30 rounded-full text-xs font-body text-blue">
-                        50+ Scripts
-                      </span>
-                      <span className="px-2 py-1 bg-blue-10 border border-blue-30 rounded-full text-xs font-body text-blue">
-                        Templates Included
-                      </span>
-                      <span className="px-2 py-1 bg-blue-10 border border-blue-30 rounded-full text-xs font-body text-blue">
-                        AI Prompts
-                      </span>
-                    </div>
-                    <div className="bg-slate-900/50 rounded-lg px-3 py-2 inline-block">
-                      <span className="text-xs text-slate-400 font-body line-through">$97 Value</span>
-                      <span className="text-xs text-gold font-body font-semibold ml-2">Included for $37</span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="bg-slate-900/50 rounded-lg px-4 py-2">
-                      <span className="font-heading font-bold text-gold text-lg">+$37 <span className="text-sm text-slate-400 font-normal">(~₹{bumpPriceINR.toLocaleString()})</span></span>
-                    </div>
-                  </div>
-                </label>
+              {/* Currency banner */}
+              <div className="bg-gray-800 border border-gray-600 rounded-lg p-2 mb-4 sm:mb-6 text-center">
+                <p className="text-xs text-gray-400">
+                  💰 Price displayed in USD (~₹{totalINR.toLocaleString()} INR)
+                </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8">
-                {/* Contact info */}
-                <div className="space-y-6">
-                  <h3 className="font-heading font-semibold text-white flex items-center gap-3 text-lg">
-                    <span className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-sm text-gold border border-gold/30">1</span>
-                    Contact Information
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="name" className="text-slate-300 font-body font-medium mb-2 block">Full Name</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="bg-slate-900/50 border-slate-700 focus:border-gold focus:ring-gold/20 h-12 text-white"
-                        placeholder="John Doe"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email" className="text-slate-300 font-body font-medium mb-2 block">Email Address</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="bg-slate-900/50 border-slate-700 focus:border-gold focus:ring-gold/20 h-12 text-white"
-                        placeholder="john@example.com"
-                      />
-                    </div>
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <Label htmlFor="name" className="text-gray-300 font-body font-medium mb-2 block text-sm">Full Name</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="bg-gray-800 border-gray-600 focus:border-yellow-400 focus:ring-yellow-400/20 h-10 sm:h-11 text-white text-sm"
+                      placeholder="Enter your name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-gray-300 font-body font-medium mb-2 block text-sm">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="bg-gray-800 border-gray-600 focus:border-yellow-400 focus:ring-yellow-400/20 h-10 sm:h-11 text-white text-sm"
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div>
+                    <Label htmlFor="phone" className="text-gray-300 font-body font-medium mb-2 block text-sm">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="bg-gray-800 border-gray-600 focus:border-yellow-400 focus:ring-yellow-400/20 h-10 sm:h-11 text-white text-sm"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="company" className="text-gray-300 font-body font-medium mb-2 block text-sm">Company Name</Label>
+                    <Input
+                      id="company"
+                      type="text"
+                      value={formData.company}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      className="bg-gray-800 border-gray-600 focus:border-yellow-400 focus:ring-yellow-400/20 h-10 sm:h-11 text-white text-sm"
+                      placeholder="Your company (optional)"
+                    />
                   </div>
                 </div>
 
-                {/* Total and CTA */}
-                <div className="pt-6 border-t border-slate-700">
-                  <div className="bg-gradient-to-r from-gold/5 to-transparent rounded-xl p-6 mb-6">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                      <span className="font-heading font-semibold text-white text-lg">Total Today</span>
-                      <div className="text-right">
-                        <span className="text-3xl md:text-4xl font-heading font-bold text-gold">${total}</span>
-                        <p className="text-sm text-slate-400 font-normal mt-1">(~₹{totalINR.toLocaleString()} INR)</p>
+                {/* Message Field */}
+                <div>
+                  <Label htmlFor="message" className="text-gray-300 font-body font-medium mb-2 block text-sm">Message (Optional)</Label>
+                  <textarea
+                    id="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="bg-gray-800 border-gray-600 focus:border-yellow-400 focus:ring-yellow-400/20 h-14 sm:h-16 text-white text-sm rounded-lg p-3 w-full resize-none"
+                    placeholder="Tell us about your sales goals..."
+                    rows={2}
+                  />
+                </div>
+
+                {/* Order Bump */}
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-3 sm:p-4">
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={orderBump}
+                      onCheckedChange={(checked) => setOrderBump(checked as boolean)}
+                      className="mt-1 border-yellow-400 data-[state=checked]:bg-yellow-400 data-[state=checked]:border-yellow-400 w-4 h-4"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="px-2 py-1 bg-red-500/20 border border-red-500/40 rounded-full text-xs font-body text-red-400 font-semibold animate-pulse">
+                          ONE-TIME OFFER - 75% OFF
+                        </span>
                       </div>
+                      <h3 className="text-sm font-heading font-bold text-white mb-1">
+                        Add Advanced Script Pack - Just $37
+                      </h3>
+                      <p className="text-xs text-gray-300">
+                        50+ outreach scripts for DM, email, and calls
+                      </p>
                     </div>
-                  </div>
+                  </label>
+                </div>
 
-                  <Button
-                    type="submit"
-                    variant="gold"
-                    size="xl"
-                    className="w-full group h-14 text-lg"
-                    disabled={isProcessing}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="w-5 h-5 mr-3 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="w-5 h-5 mr-3" />
-                        Pay Securely with Razorpay
-                      </>
-                    )}
-                  </Button>
-
-                  <div className="flex flex-col items-center gap-3 mt-6">
-                    <div className="flex items-center gap-2 text-sm text-slate-400 font-body">
-                      <Shield className="w-4 h-4" />
-                      <span>Secure checkout • 30-day money-back guarantee</span>
-                    </div>
-                    <div className="text-xs text-slate-500 font-body">
-                      Powered by Razorpay - India's most trusted payment gateway
-                    </div>
+                {/* Price Summary */}
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-3 sm:p-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Ultimate Bundle</span>
+                    <span className="text-white font-medium">${basePrice}</span>
                   </div>
+                  {orderBump && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Script Pack</span>
+                      <span className="text-white font-medium">${bumpPrice}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-700 pt-2">
+                    <div className="flex justify-between">
+                      <span className="text-white font-semibold">Total</span>
+                      <span className="text-xl sm:text-2xl font-heading font-bold text-yellow-400">${total}</span>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">(~₹{totalINR.toLocaleString()} INR)</p>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <Button
+                  type="submit"
+                  variant="gold"
+                  size="lg"
+                  className="w-full h-11 sm:h-12 text-sm sm:text-base md:text-lg font-semibold"
+                  disabled={isProcessing}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Get Instant Access — $147
+                    </>
+                  )}
+                </Button>
+
+                {/* Trust indicators */}
+                <div className="text-center space-y-2">
+                  <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-400">
+                    <Shield className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">30-Day Money-Back Guarantee</span>
+                    <span className="sm:hidden">30-Day Guarantee</span>
+                  </div>
+                  <p className="text-xs text-gray-500">Powered by Razorpay • Secure SSL Encryption</p>
                 </div>
               </form>
             </div>

@@ -7,6 +7,9 @@ declare global {
 export interface PaymentData {
   name: string;
   email: string;
+  phone: string;
+  company?: string;
+  message?: string;
   amount: number;
   orderBump: boolean;
 }
