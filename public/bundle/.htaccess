@@ -1,0 +1,23 @@
+# Enable file downloads for bundle files
+<FilesMatch "\.(pdf|docx)$">
+    Header set Content-Disposition "attachment"
+    Header set Content-Type "application/octet-stream"
+</FilesMatch>
+
+# Allow access to bundle files
+<Directory "/bundle">
+    Options +Indexes
+    AllowOverride All
+    Require all granted
+</Directory>
+
+# Set proper MIME types
+AddType application/pdf .pdf
+AddType application/vnd.openxmlformats-officedocument.wordprocessingml.document .docx
+
+# Enable CORS for downloads
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>

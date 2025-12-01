@@ -8,6 +8,7 @@ import Bundle from "./pages/Bundle";
 import Contact from "./pages/Contact";
 import Checkout from "./pages/Checkout";
 import ThankYou from "./pages/ThankYou";
+import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/download" element={<Download />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

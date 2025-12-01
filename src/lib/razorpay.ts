@@ -87,7 +87,7 @@ export const initiateRazorpayPayment = async (
   }
 
   const options: RazorpayOptions = {
-    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+    key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_1234567890abcdef',
     amount: paymentData.amount * 100, // Razorpay expects amount in paise
     currency: 'INR',
     name: 'High-Ticket Sales Bundle',

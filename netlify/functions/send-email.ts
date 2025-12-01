@@ -2,47 +2,80 @@ import { Handler } from '@netlify/functions';
 import nodemailer from 'nodemailer';
 
 interface OrderDetails {
-    name: string;
-    email: string;
-    amount: number;
-    orderBump: boolean;
-    paymentId: string;
-    date: string;
+  name: string;
+  email: string;
+  amount: number;
+  orderBump: boolean;
+  paymentId: string;
+  date: string;
 }
 
 const handler: Handler = async (event) => {
-    // Only allow POST requests
-    if (event.httpMethod !== 'POST') {
-        return {
-            statusCode: 405,
-            body: JSON.stringify({ error: 'Method not allowed' }),
-        };
+  // Only allow POST requests
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: JSON.stringify({ error: 'Method not allowed' }),
+    };
+  }
+
+  try {
+    const orderDetails: OrderDetails = JSON.parse(event.body || '{}');
+
+    // Validate required fields
+    if (!orderDetails.email || !orderDetails.name || !orderDetails.paymentId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Missing required fields' }),
+      };
     }
 
-    try {
-        const orderDetails: OrderDetails = JSON.parse(event.body || '{}');
+    // Create transporter with Gmail SMTP
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
 
-        // Validate required fields
-        if (!orderDetails.email || !orderDetails.name || !orderDetails.paymentId) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Missing required fields' }),
-            };
-        }
+    // Get site URL from environment
+    const siteUrl = process.env.VITE_SITE_URL || 'https://your-site.netlify.app';
 
-        // Create transporter with Gmail SMTP
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_APP_PASSWORD,
-            },
-        });
+    // Bundle files list
+    const bundleFiles = [
+      { name: 'High-Ticket Affiliate Marketing - Book.pdf', display: '📚 High-Ticket Affiliate Marketing - Complete Book (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Workbook.pdf', display: '📝 High-Ticket Affiliate Marketing - Workbook (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Checklist.pdf', display: '✅ High-Ticket Affiliate Marketing - Checklist (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Guide 1_3.pdf', display: '📖 High-Ticket Affiliate Marketing - Guide 1/3 (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Guide 2_3.pdf', display: '📖 High-Ticket Affiliate Marketing - Guide 2/3 (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Guide 3_3.pdf', display: '📖 High-Ticket Affiliate Marketing - Guide 3/3 (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Prompts.pdf', display: '💡 High-Ticket Affiliate Marketing - Prompts (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Toolstack.pdf', display: '🛠️ High-Ticket Affiliate Marketing - Toolstack (PDF)' },
+      { name: 'High-Ticket Affiliate Marketing - Book.docx', display: '📚 High-Ticket Affiliate Marketing - Book (DOCX)' },
+      { name: 'workbook2.docx', display: '📝 High-Ticket Affiliate Marketing - Workbook (DOCX)' },
+      { name: 'High-Ticket Affiliate Marketing - Checklist.docx', display: '✅ High-Ticket Affiliate Marketing - Checklist (DOCX)' },
+      { name: 'High-Ticket Affiliate Marketing - Guide 1_3.docx', display: '📖 High-Ticket Affiliate Marketing - Guide 1/3 (DOCX)' },
+      { name: 'High-Ticket Affiliate Marketing - Guide 2_3.docx', display: '📖 High-Ticket Affiliate Marketing - Guide 2/3 (DOCX)' },
+      { name: 'High-Ticket Affiliate Marketing - Guide 3_3.docx', display: '📖 High-Ticket Affiliate Marketing - Guide 3/3 (DOCX)' },
+      { name: 'High-Ticket Affiliate Marketing - Prompts.docx', display: '💡 High-Ticket Affiliate Marketing - Prompts (DOCX)' },
+      { name: 'High-Ticket Affiliate Marketing - Toolstack.docx', display: '🛠️ High-Ticket Affiliate Marketing - Toolstack (DOCX)' },
+    ];
 
-        // Buyer email HTML
-        const buyerEmailHtml = `
+    // Generate download links HTML
+    const downloadLinksHtml = bundleFiles.map(file => `
+            <div style="margin: 10px 0;">
+              <a href="${siteUrl}/.netlify/functions/download-file?file=${encodeURIComponent(file.name)}" 
+                 style="display: inline-block; background: #1a1a1a; color: #D4AF37; padding: 12px 20px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s;">
+                ${file.display}
+              </a>
+            </div>
+        `).join('');
+
+    // Buyer email HTML
+    const buyerEmailHtml = `
       <!DOCTYPE html>
       <html>
       <head>
@@ -52,6 +85,8 @@ const handler: Handler = async (event) => {
           .content { background: #f9f9f9; padding: 30px; border: 1px solid #ddd; }
           .details-box { background: white; border-left: 4px solid #D4AF37; padding: 15px; margin: 20px 0; }
           .detail-row { padding: 8px 0; border-bottom: 1px solid #eee; }
+          .download-section { background: white; border: 2px solid #1a1a1a; padding: 20px; margin: 20px 0; border-radius: 10px; }
+          .download-note { background: #fff3cd; border-left: 4px solid #D4AF37; padding: 15px; margin: 20px 0; font-size: 14px; }
         </style>
       </head>
       <body>
@@ -65,16 +100,34 @@ const handler: Handler = async (event) => {
           <div class="details-box">
             <h3>📋 Order Details</h3>
             <div class="detail-row"><strong>Product:</strong> ${orderDetails.orderBump ? 'Ultimate High-Ticket Sales Bundle + Advanced Outreach Scripts' : 'Ultimate High-Ticket Sales Bundle'}</div>
-            <div class="detail-row"><strong>Amount Paid:</strong> ₹${orderDetails.amount}</div>
+            <div class="detail-row"><strong>Amount Paid:</strong> $${orderDetails.amount}</div>
             <div class="detail-row"><strong>Payment ID:</strong> ${orderDetails.paymentId}</div>
             <div class="detail-row"><strong>Order Date:</strong> ${orderDetails.date}</div>
             <div class="detail-row"><strong>Order Bump:</strong> ${orderDetails.orderBump ? 'Yes' : 'No'}</div>
           </div>
-          <h3>📥 What's Next?</h3>
+          
+          <div class="download-section">
+            <h3 style="color: #1a1a1a; margin-top: 0;">📥 Download Your Bundle Files</h3>
+            <p style="margin-bottom: 20px;">Click the buttons below to download all your materials. You have <strong>lifetime access</strong> to these files.</p>
+            ${downloadLinksHtml}
+          </div>
+
+          <div class="download-note">
+            <strong>💡 Important Notes:</strong>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+              <li>These download links are exclusively for you</li>
+              <li>You can download the files anytime</li>
+              <li>Save this email for future access</li>
+              <li>If you have any issues downloading, contact support</li>
+            </ul>
+          </div>
+
+          <h3>🚀 What's Next?</h3>
           <ol>
-            <li>You'll receive another email with your access links shortly</li>
-            <li>Download all your materials</li>
-            <li>Start implementing immediately!</li>
+            <li>Download all your materials using the links above</li>
+            <li>Review the materials at your own pace</li>
+            <li>Start implementing the strategies immediately</li>
+            <li>Reach out if you have any questions!</li>
           </ol>
           <p><strong>Best regards,</strong><br>The High-Ticket Sales Team</p>
         </div>
@@ -82,8 +135,8 @@ const handler: Handler = async (event) => {
       </html>
     `;
 
-        // Admin email HTML
-        const adminEmailHtml = `
+    // Admin email HTML
+    const adminEmailHtml = `
       <!DOCTYPE html>
       <html>
       <head>
@@ -128,43 +181,43 @@ const handler: Handler = async (event) => {
       </html>
     `;
 
-        // Send email to buyer
-        await transporter.sendMail({
-            from: `"High-Ticket Sales" <${process.env.GMAIL_USER}>`,
-            to: orderDetails.email,
-            subject: '🎉 Order Confirmed - High-Ticket Sales Bundle',
-            html: buyerEmailHtml,
-        });
+    // Send email to buyer
+    await transporter.sendMail({
+      from: `"High-Ticket Sales" <${process.env.GMAIL_USER}>`,
+      to: orderDetails.email,
+      subject: '🎉 Order Confirmed - High-Ticket Sales Bundle',
+      html: buyerEmailHtml,
+    });
 
-        console.log('✅ Buyer email sent to:', orderDetails.email);
+    console.log('✅ Buyer email sent to:', orderDetails.email);
 
-        // Send email to admin
-        await transporter.sendMail({
-            from: `"High-Ticket Sales System" <${process.env.GMAIL_USER}>`,
-            to: process.env.ADMIN_EMAIL,
-            subject: `💰 New Order: ${orderDetails.name} - ₹${orderDetails.amount}`,
-            html: adminEmailHtml,
-        });
+    // Send email to admin
+    await transporter.sendMail({
+      from: `"High-Ticket Sales System" <${process.env.GMAIL_USER}>`,
+      to: process.env.ADMIN_EMAIL,
+      subject: `💰 New Order: ${orderDetails.name} - ₹${orderDetails.amount}`,
+      html: adminEmailHtml,
+    });
 
-        console.log('✅ Admin email sent to:', process.env.ADMIN_EMAIL);
+    console.log('✅ Admin email sent to:', process.env.ADMIN_EMAIL);
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                success: true,
-                message: 'Emails sent successfully'
-            }),
-        };
-    } catch (error) {
-        console.error('❌ Error sending email:', error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({
-                error: 'Failed to send email',
-                details: error instanceof Error ? error.message : 'Unknown error'
-            }),
-        };
-    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        message: 'Emails sent successfully'
+      }),
+    };
+  } catch (error) {
+    console.error('❌ Error sending email:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: 'Failed to send email',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }),
+    };
+  }
 };
 
 export { handler };

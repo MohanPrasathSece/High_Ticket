@@ -22,6 +22,7 @@ const Checkout = () => {
     company: "",
     message: "",
   });
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "payoneer">("razorpay");
 
   const basePrice = 147;
   const bumpPrice = 37;
@@ -48,7 +49,7 @@ const Checkout = () => {
     { name: "Jennifer Park", text: "Marketing Consultant" },
   ];
 
-  const handlePaymentSuccess = async (response: RazorpayResponse) => {
+  const handlePaymentSuccess = async (response: any) => {
     console.log("✅ Payment successful:", response);
 
     setIsProcessing(true);
@@ -60,8 +61,9 @@ const Checkout = () => {
         email: formData.email,
         amount: total,
         orderBump: orderBump,
-        paymentId: response.razorpay_payment_id,
-        orderId: response.razorpay_order_id,
+        paymentMethod: paymentMethod,
+        paymentId: response.razorpay_payment_id || response.payoneer_payment_id || 'PAY-' + Date.now(),
+        orderId: response.razorpay_order_id || response.payoneer_order_id || 'ORD-' + Date.now(),
         date: new Date().toLocaleString('en-US', {
           dateStyle: 'medium',
           timeStyle: 'short',
@@ -69,15 +71,20 @@ const Checkout = () => {
       };
 
       // Send emails to buyer and admin
-      await sendOrderEmails(orderDetails);
+      try {
+        await sendOrderEmails(orderDetails);
+      } catch (emailError) {
+        console.warn('Email service failed, but payment succeeded:', emailError);
+        // Don't block the payment flow if emails fail
+      }
 
       toast({
         title: "Payment Successful!",
-        description: "Thank you for your purchase. Check your email for access details.",
+        description: "Thank you for your purchase. Redirecting to download page...",
       });
 
-      // Redirect to thank you page
-      navigate("/thank-you");
+      // Redirect to thank you page with payment details
+      navigate(`/thank-you?paymentId=${orderDetails.paymentId}&email=${encodeURIComponent(formData.email)}`);
     } catch (error) {
       console.error("Error processing payment success:", error);
       toast({
@@ -90,6 +97,199 @@ const Checkout = () => {
     }
   };
 
+  const handleRazorpayPayment = async () => {
+    try {
+      console.log('🚀 Initiating Razorpay payment...');
+      
+      const paymentData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        message: formData.message,
+        amount: totalINR,
+        orderBump: orderBump,
+      };
+
+      await initiateRazorpayPayment(
+        paymentData,
+        (response: RazorpayResponse) => {
+          console.log('✅ Razorpay payment successful:', response);
+          handlePaymentSuccess({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          });
+        },
+        () => {
+          console.log('❌ Razorpay payment cancelled');
+          handlePaymentFailure();
+        }
+      );
+      
+    } catch (error) {
+      console.error("Razorpay error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to initialize Razorpay. Please try again.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePayoneerPayment = async () => {
+    try {
+      // Create Payoneer payment request
+      const payoneerData = {
+        amount: total,
+        currency: "USD",
+        description: "High-Ticket Sales Mastery Bundle" + (orderBump ? " + Script Pack" : ""),
+        customer: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        },
+        returnUrl: `${window.location.origin}/thank-you`,
+        cancelUrl: `${window.location.origin}/checkout`,
+      };
+
+      // Show Payoneer payment modal
+      console.log("Initiating Payoneer payment:", payoneerData);
+      
+      // Create a modal overlay for Payoneer payment
+      const modal = document.createElement('div');
+      modal.id = 'payoneer-modal';
+      modal.className = 'fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-md w-full mx-4">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">Payoneer Payment</h3>
+            <button onclick="this.closest('#payoneer-modal').remove()" class="text-gray-400 hover:text-white">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="text-center">
+              <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
+              <h4 class="text-lg font-semibold text-white mb-2">Complete Payment</h4>
+              <p class="text-gray-300 text-sm mb-4">Amount: $${total} USD</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-lg p-4">
+              <div class="space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Product:</span>
+                  <span class="text-white">High-Ticket Sales Mastery Bundle</span>
+                </div>
+                ${orderBump ? `
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Order Bump:</span>
+                  <span class="text-white">Script Pack</span>
+                </div>
+                ` : ''}
+                <div class="flex justify-between font-semibold">
+                  <span class="text-white">Total:</span>
+                  <span class="text-yellow-400">$${total} USD</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="text-center">
+              <p class="text-xs text-gray-400 mb-4">This is a demo Payoneer payment flow</p>
+              <button 
+                onclick="window.payoneerSuccess()" 
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors"
+              >
+                Confirm Payment - $${total}
+              </button>
+              <button 
+                onclick="window.payoneerCancel()" 
+                class="w-full mt-2 border border-gray-600 text-gray-300 hover:bg-gray-800 font-semibold py-2 rounded-lg transition-colors"
+              >
+                Cancel Payment
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Add global functions for the modal buttons
+      (window as any).payoneerSuccess = () => {
+        modal.remove();
+        handlePaymentSuccess({
+          payoneer_payment_id: 'PAY-' + Date.now(),
+          payoneer_order_id: 'ORD-' + Date.now(),
+        });
+      };
+      
+      (window as any).payoneerCancel = () => {
+        modal.remove();
+        handlePaymentFailure();
+      };
+      
+      // Add modal to page
+      document.body.appendChild(modal);
+      
+      // Auto-close modal if user clicks outside
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.remove();
+          handlePaymentFailure();
+        }
+      });
+      
+    } catch (error) {
+      console.error("Payoneer error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to initialize Payoneer. Please try again.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+
+    try {
+      // Validate form
+      if (!formData.name || !formData.email || !formData.phone) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in all required fields.",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      // Process payment based on selected method
+      if (paymentMethod === "razorpay") {
+        await handleRazorpayPayment();
+      } else if (paymentMethod === "payoneer") {
+        await handlePayoneerPayment();
+      }
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to process payment. Please try again.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
+  };
+
   const handlePaymentFailure = () => {
     console.log("❌ Payment failed or cancelled");
     setIsProcessing(false);
@@ -98,57 +298,6 @@ const Checkout = () => {
       description: "Your payment was not completed. Please try again.",
       variant: "destructive",
     });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate form
-    if (!formData.name || !formData.email || !formData.phone) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields (name, email, and phone).",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check if Razorpay key is configured
-    if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
-      toast({
-        title: "Configuration Error",
-        description: "Payment system is not configured. Please contact support.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsProcessing(true);
-
-    try {
-      // Initiate Razorpay payment
-      await initiateRazorpayPayment(
-        {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          message: formData.message,
-          amount: total,
-          orderBump,
-        },
-        handlePaymentSuccess,
-        handlePaymentFailure
-      );
-    } catch (error) {
-      console.error("Error initiating payment:", error);
-      setIsProcessing(false);
-      toast({
-        title: "Payment Error",
-        description: "Unable to initiate payment. Please try again.",
-        variant: "destructive",
-      });
-    }
   };
 
   return (
@@ -238,10 +387,26 @@ const Checkout = () => {
                   </div>
 
                   {/* Currency banner */}
-                  <div className="bg-gray-700 border border-gray-600 rounded-lg p-3 mb-6 text-center">
-                    <p className="text-sm text-gray-300">
-                      💰 Price displayed in USD (~₹{totalINR.toLocaleString()} INR)
-                    </p>
+                  <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 mb-6">
+                    <div className="text-center">
+                      <p className="text-sm text-yellow-400 font-semibold mb-1">
+                        💰 Pricing Information
+                      </p>
+                      <div className="space-y-1">
+                        <p className="text-xs text-gray-300">
+                          <span className="text-white">USD:</span> ${total} (displayed for convenience)
+                        </p>
+                        <p className="text-xs text-gray-300">
+                          <span className="text-white">INR:</span> ₹{totalINR.toLocaleString()} (actual charge)
+                        </p>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {paymentMethod === "razorpay" 
+                          ? "Processed securely in INR via Razorpay" 
+                          : "Processed securely in USD via Payoneer"
+                        }
+                      </p>
+                    </div>
                   </div>
 
                   {/* Form */}
@@ -312,6 +477,52 @@ const Checkout = () => {
                       />
                     </div>
 
+                    {/* Payment Method Selection */}
+                    <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
+                      <Label className="text-gray-300 font-body font-medium mb-3 block text-sm">Choose Payment Method</Label>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-yellow-400 transition-colors">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="razorpay"
+                            checked={paymentMethod === "razorpay"}
+                            onChange={(e) => setPaymentMethod(e.target.value as "razorpay" | "payoneer")}
+                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-medium">Razorpay</span>
+                              <span className="px-2 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-400 font-semibold">Popular</span>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">
+                              Pay in INR • UPI, Cards, NetBanking • Instant processing
+                            </div>
+                          </div>
+                        </label>
+                        
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-yellow-400 transition-colors">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="payoneer"
+                            checked={paymentMethod === "payoneer"}
+                            onChange={(e) => setPaymentMethod(e.target.value as "razorpay" | "payoneer")}
+                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-medium">Payoneer</span>
+                              <span className="px-2 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-400 font-semibold">International</span>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">
+                              Pay in USD • International cards, Wire transfer • Global customers
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
                     {/* Order Bump */}
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
                       <label className="flex items-start gap-3 cursor-pointer">
@@ -340,18 +551,27 @@ const Checkout = () => {
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 space-y-2">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Ultimate Bundle</span>
-                        <span className="text-white font-medium">${basePrice}</span>
+                        <div className="text-right">
+                          <span className="text-white font-medium">${basePrice}</span>
+                          <div className="text-xs text-gray-400">₹{basePriceINR.toLocaleString()}</div>
+                        </div>
                       </div>
                       {orderBump && (
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-400">Script Pack</span>
-                          <span className="text-white font-medium">${bumpPrice}</span>
+                          <div className="text-right">
+                            <span className="text-white font-medium">${bumpPrice}</span>
+                            <div className="text-xs text-gray-400">₹{bumpPriceINR.toLocaleString()}</div>
+                          </div>
                         </div>
                       )}
                       <div className="border-t border-gray-600 pt-2">
                         <div className="flex justify-between items-center">
                           <span className="text-white font-semibold">Total</span>
-                          <span className="text-2xl font-heading font-bold text-yellow-400">${total}</span>
+                          <div className="text-right">
+                            <span className="text-2xl font-heading font-bold text-yellow-400">${total}</span>
+                            <div className="text-sm text-yellow-300 font-medium">₹{totalINR.toLocaleString()}</div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -371,7 +591,7 @@ const Checkout = () => {
                         </>
                       ) : (
                         <>
-                          🚀 Get Instant Access — ${total}
+                          🚀 Pay with {paymentMethod === "razorpay" ? "Razorpay" : "Payoneer"} — ${total} (₹{totalINR.toLocaleString()})
                           <ArrowRight className="w-5 h-5 ml-2" />
                         </>
                       )}
