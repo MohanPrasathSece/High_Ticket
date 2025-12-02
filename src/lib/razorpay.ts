@@ -79,7 +79,7 @@ export const initiateRazorpayPayment = async (
   onFailure: () => void
 ): Promise<void> => {
   const scriptLoaded = await loadRazorpayScript();
-  
+
   if (!scriptLoaded) {
     alert('Razorpay SDK failed to load. Please check your internet connection.');
     onFailure();
@@ -91,13 +91,17 @@ export const initiateRazorpayPayment = async (
     amount: paymentData.amount * 100, // Razorpay expects amount in paise
     currency: 'INR',
     name: 'High-Ticket Sales Bundle',
-    description: paymentData.orderBump 
-      ? 'Ultimate Bundle + Advanced Outreach Scripts' 
+    description: paymentData.orderBump
+      ? 'Ultimate Bundle + Advanced Outreach Scripts'
       : 'Ultimate High-Ticket Sales Bundle',
     image: '/favicon.ico',
     prefill: {
       name: paymentData.name,
       email: paymentData.email,
+      contact: paymentData.phone, // Add phone for better mobile experience
+    },
+    notes: {
+      order_type: paymentData.orderBump ? 'bundle_with_bump' : 'bundle_only',
     },
     theme: {
       color: '#D4AF37', // Gold color
@@ -109,8 +113,17 @@ export const initiateRazorpayPayment = async (
       ondismiss: () => {
         onFailure();
       },
+      escape: false, // Prevent accidental closing on mobile
+      confirm_close: true, // Ask for confirmation before closing
+      backdropclose: false, // Prevent closing by clicking backdrop on mobile
     },
-  };
+    retry: {
+      enabled: true, // Enable retry for failed payments
+      max_count: 3, // Allow 3 retry attempts
+    },
+    timeout: 300, // 5 minutes timeout (300 seconds)
+    remember_customer: false,
+  } as any; // Using 'as any' to include extended Razorpay options
 
   const razorpay = new window.Razorpay(options);
   razorpay.open();
