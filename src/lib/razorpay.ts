@@ -87,30 +87,8 @@ export const initiateRazorpayPayment = async (
     return;
   }
 
-  const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
-  if (!key || typeof key !== 'string') {
-    console.error('Razorpay key is missing or invalid:', key);
-    alert('Payment gateway is not configured correctly. Please contact support.');
-    onFailure();
-    return;
-  }
-
-  if (!paymentData.amount || isNaN(paymentData.amount) || paymentData.amount <= 0) {
-    console.error('Invalid Razorpay amount:', paymentData.amount, paymentData);
-    alert('Invalid payment amount. Please refresh the page and try again.');
-    onFailure();
-    return;
-  }
-
-  console.log('Initializing Razorpay with:', {
-    key,
-    amountInINR: paymentData.amount,
-    amountInPaise: Math.round(paymentData.amount * 100),
-    currency: 'INR',
-  });
-
   const options: RazorpayOptions = {
-    key,
+    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
     amount: Math.round(paymentData.amount * 100), // Razorpay expects amount in paise (integer)
     currency: 'INR',
     name: 'High-Ticket Sales Bundle',

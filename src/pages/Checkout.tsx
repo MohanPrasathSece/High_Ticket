@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,33 +26,6 @@ const Checkout = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const ua = (navigator.userAgent || '').toLowerCase();
-    const isInAppBrowser =
-      ua.includes('fban') ||
-      ua.includes('fbav') ||
-      ua.includes('instagram') ||
-      ua.includes('line/') ||
-      ua.includes('micromessenger');
-    const isNotHttps = window.location.protocol !== 'https:';
-
-    if (isInAppBrowser) {
-      toast({
-        title: "Open in Browser for Payment",
-        description: "Please open this page in Chrome or Safari to complete your payment securely.",
-        variant: "destructive",
-      });
-    } else if (isNotHttps) {
-      toast({
-        title: "Secure Connection Required",
-        description: "Please use the https:// version of this page to complete your payment.",
-        variant: "destructive",
-      });
-    }
-  }, []);
 
   const basePrice = 147;
   const bumpPrice = 37;
