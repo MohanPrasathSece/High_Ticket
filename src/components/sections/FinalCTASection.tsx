@@ -27,7 +27,7 @@ const FinalCTASection = () => {
         <div className="absolute top-1/4 right-1/4 w-[800px] h-[800px] bg-gray-800/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }} />
         <div className="absolute bottom-1/4 left-1/4 w-[600px] h-[600px] bg-gray-900/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "4s" }} />
       </div>
-      
+
       {/* Top border */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
 
@@ -41,7 +41,7 @@ const FinalCTASection = () => {
                 ⚠️ FINAL CHANCE - OFFER EXPIRES SOON
               </span>
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-bold text-white mb-6">
               Your Choice:{" "}
               <span className="text-gradient-gold">Transform Today</span>{" "}
@@ -49,9 +49,9 @@ const FinalCTASection = () => {
               Or Keep Losing{" "}
               <span className="text-gradient-red">Thousands Monthly</span>
             </h2>
-            
+
             <p className="text-xl md:text-2xl text-slate-300 font-body max-w-3xl mx-auto leading-relaxed mb-12">
-              500+ professionals have already made the decision. 
+              500+ professionals have already made the decision.
               <span className="text-gold font-semibold"> The question is: will you join them or keep watching from the sidelines?</span>
             </p>
 
@@ -89,7 +89,7 @@ const FinalCTASection = () => {
                 <p className="text-slate-400 font-body">Lost monthly</p>
               </div>
             </div>
-            
+
             <div className="bg-gold/10 border border-gold/30 rounded-3xl p-8">
               <h3 className="text-2xl font-heading font-bold text-gold mb-6">When You Join Today</h3>
               <div className="space-y-4">
@@ -126,12 +126,12 @@ const FinalCTASection = () => {
             <div className="bg-gradient-to-br from-gold/10 to-gold/5 border border-gold/30 rounded-3xl p-12 relative overflow-hidden">
               {/* Glow effect */}
               <div className="absolute inset-0 bg-gradient-gold opacity-20 blur-3xl" />
-              
+
               <div className="relative z-10">
                 <h3 className="text-3xl md:text-4xl font-heading font-bold text-white mb-6">
                   Make Your Decision Now
                 </h3>
-                
+
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-8">
                   <div className="text-center">
                     <div className="text-4xl font-heading font-bold text-gold mb-2">$147</div>
@@ -147,16 +147,21 @@ const FinalCTASection = () => {
                   </div>
                 </div>
 
-                <Link to="/checkout">
-                  <Button variant="hero" size="xl" className="group text-xl px-12 py-8 h-auto mb-6">
-                    <span className="flex items-center gap-4">
-                      <ShieldCheck className="w-8 h-8" />
-                      Get Instant Access Now — $147 <span className="text-sm text-slate-300 font-normal">(~₹12,201)</span>
-                      <ArrowRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" />
-                    </span>
+                <Link to="/checkout" className="block w-full max-w-xl mx-auto">
+                  <Button variant="hero" size="xl" className="group w-full px-4 sm:px-6 py-4 sm:py-5 h-auto mb-6">
+                    <div className="flex flex-col items-center gap-1.5 text-center w-full">
+                      <div className="flex items-center gap-2 justify-center">
+                        <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                        <span className="font-bold text-sm sm:text-base md:text-lg">Get Access $147</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-300 font-normal">
+                        <span>(~₹12,201)</span>
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform" />
+                      </div>
+                    </div>
                   </Button>
                 </Link>
-                
+
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-slate-400 font-body">
                   <span className="flex items-center gap-2">
                     <ShieldCheck className="w-5 h-5 text-yellow-400" />
@@ -169,7 +174,7 @@ const FinalCTASection = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Final guarantee */}
             <div className="mt-12">
               <GuaranteeBadge />

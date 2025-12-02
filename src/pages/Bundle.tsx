@@ -21,16 +21,16 @@ const Bundle = () => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         const totalSeconds = prev.hours * 3600 + prev.minutes * 60 + prev.seconds - 1;
-        
+
         if (totalSeconds <= 0) {
           clearInterval(timer);
           return { hours: 0, minutes: 0, seconds: 0 };
         }
-        
+
         const hours = Math.floor(totalSeconds / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        
+
         return { hours, minutes, seconds };
       });
     }, 1000);
@@ -66,7 +66,7 @@ const Bundle = () => {
                   </span>
                 </div>
               </div>
-              
+
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 sm:mb-6 leading-tight">
                 Stop Chasing Low-Ticket Clients.
                 <br className="hidden sm:block" />
@@ -77,7 +77,7 @@ const Bundle = () => {
               <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed px-2">
                 The proven, results-based framework used by <span className="text-yellow-400 font-semibold">500+ professionals</span> to create consistent five-figure days.
               </p>
-              
+
               {/* Price and Features */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <div className="flex items-center gap-2 text-yellow-400">
@@ -90,12 +90,12 @@ const Bundle = () => {
                   <span className="text-yellow-400">✓</span> 30-Day Guarantee
                 </div>
               </div>
-              
+
               {/* CTA Button */}
               <div className="mb-8">
                 <Link to="/checkout">
-                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-lg transition-all transform hover:scale-105">
-                    Get the Ultimate High-Ticket Sales Bundle — $147
+                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg px-6 sm:px-8 py-4 rounded-lg transition-all transform hover:scale-105">
+                    Get Bundle $147
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
@@ -166,7 +166,7 @@ const Bundle = () => {
 
             <div className="text-center mt-12">
               <p className="text-xl text-gray-300 italic">
-                The issue isn't your talent. It's that you don't have a 
+                The issue isn't your talent. It's that you don't have a
                 <span className="text-yellow-400 font-semibold"> repeatable high-ticket system.</span>
               </p>
               <p className="text-2xl text-yellow-400 font-bold mt-4">

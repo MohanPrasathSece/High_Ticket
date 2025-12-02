@@ -46,7 +46,7 @@ const HeroSection = () => {
 
               {/* Enhanced sub-headline */}
               <p className="text-lg md:text-xl text-slate-300 font-body max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-                The exact framework 500+ sales professionals use to consistently close high-ticket deals. 
+                The exact framework 500+ sales professionals use to consistently close high-ticket deals.
                 <span className="text-gold font-semibold"> No more guesswork. Just proven results.</span>
               </p>
 
@@ -74,24 +74,28 @@ const HeroSection = () => {
               </div>
 
               {/* Enhanced CTA */}
-              <div className="animate-fade-in-up" style={{ animationDelay: "0.5s" }}>
-                <Link to="/checkout">
-                  <Button variant="hero" size="xl" className="group text-lg px-8 py-6 h-auto mb-4">
-                    <span className="flex items-center justify-center gap-3">
-                      <ShieldCheck className="w-6 h-6" />
-                      Get Instant Access Now — $147 <span className="text-sm text-slate-300 font-normal">(~₹12,201)</span>
-                      <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                    </span>
+              <div className="animate-fade-in-up w-full" style={{ animationDelay: "0.5s" }}>
+                <Link to="/checkout" className="block w-full max-w-md mx-auto lg:mx-0">
+                  <Button variant="hero" size="xl" className="group w-full px-4 sm:px-6 py-5 sm:py-6 h-auto mb-4">
+                    <div className="flex flex-col items-center gap-1.5 text-center w-full">
+                      <div className="flex items-center gap-2 justify-center">
+                        <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+                        <span className="font-bold text-sm sm:text-base md:text-lg">Get Access $147</span>
+                      </div>
+                      <div className="text-xs sm:text-sm text-slate-300 font-normal">
+                        (~₹12,201)
+                      </div>
+                    </div>
                   </Button>
                 </Link>
-                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 text-sm text-slate-400 font-body">
+                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs sm:text-sm text-slate-400 font-body flex-wrap">
                   <span className="flex items-center gap-1">
                     <ShieldCheck className="w-4 h-4 text-yellow-400" />
                     30-Day Money Back Guarantee
                   </span>
-                  <span>•</span>
+                  <span className="hidden sm:inline">•</span>
                   <span>Instant Digital Access</span>
-                  <span>•</span>
+                  <span className="hidden sm:inline">•</span>
                   <span>$1,200+ Value</span>
                 </div>
               </div>
@@ -103,7 +107,7 @@ const HeroSection = () => {
               <div className="relative animate-fade-in-up" style={{ animationDelay: "0.6s" }}>
                 {/* Glow effect */}
                 <div className="absolute inset-0 bg-gradient-gold opacity-30 blur-3xl rounded-3xl animate-pulse" />
-                
+
                 {/* Product card */}
                 <div className="relative bg-slate-800/80 backdrop-blur-xl border border-gold/40 rounded-3xl p-8 md:p-12 shadow-2xl">
                   <div className="text-center mb-8">
@@ -127,7 +131,7 @@ const HeroSection = () => {
                       { title: "AI Prompt Pack", desc: "50+ proven prompts", icon: "🤖" },
                       { title: "Bonus Scripts", desc: "$97 value free", icon: "🎁" }
                     ].map((item, i) => (
-                      <div 
+                      <div
                         key={item.title}
                         className="bg-slate-900/50 border border-slate-700 rounded-xl p-4 hover:border-gold/50 transition-all duration-300 hover:scale-105"
                       >

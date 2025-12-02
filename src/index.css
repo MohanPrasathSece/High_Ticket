@@ -82,10 +82,15 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-background text-foreground font-body antialiased overflow-x-hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-heading font-bold tracking-tight;
   }
 }
@@ -93,6 +98,13 @@
 @layer utilities {
   .text-gradient-gold {
     background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-red {
+    background: linear-gradient(135deg, hsl(0 84% 60%), hsl(20 90% 65%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -133,18 +145,24 @@
 
 /* Custom animations */
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
 }
 
 @keyframes pulse-gold {
-  0%, 100% {
+
+  0%,
+  100% {
     box-shadow: 0 0 20px hsl(var(--gold) / 0.4);
   }
+
   50% {
     box-shadow: 0 0 40px hsl(var(--gold) / 0.6);
   }
@@ -154,6 +172,7 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -164,6 +183,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -175,6 +195,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -190,12 +211,10 @@
 }
 
 .animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    hsl(var(--gold) / 0) 0%,
-    hsl(var(--gold) / 0.3) 50%,
-    hsl(var(--gold) / 0) 100%
-  );
+  background: linear-gradient(90deg,
+      hsl(var(--gold) / 0) 0%,
+      hsl(var(--gold) / 0.3) 50%,
+      hsl(var(--gold) / 0) 100%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
