@@ -87,22 +87,44 @@ export const initiateRazorpayPayment = async (
     return;
   }
 
+  const key = import.meta.env.VITE_RAZORPAY_KEY_ID;
+  if (!key || typeof key !== 'string') {
+    console.error('Razorpay key is missing or invalid:', key);
+    alert('Payment gateway is not configured correctly. Please contact support.');
+    onFailure();
+    return;
+  }
+
+  if (!paymentData.amount || isNaN(paymentData.amount) || paymentData.amount <= 0) {
+    console.error('Invalid Razorpay amount:', paymentData.amount, paymentData);
+    alert('Invalid payment amount. Please refresh the page and try again.');
+    onFailure();
+    return;
+  }
+
+  console.log('Initializing Razorpay with:', {
+    key,
+    amountInINR: paymentData.amount,
+    amountInPaise: Math.round(paymentData.amount * 100),
+    currency: 'INR',
+  });
+
   const options: RazorpayOptions = {
-    key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_1234567890abcdef',
-    amount: paymentData.amount * 100, // Razorpay expects amount in paise
+    key,
+    amount: Math.round(paymentData.amount * 100), // Razorpay expects amount in paise (integer)
     currency: 'INR',
     name: 'High-Ticket Sales Bundle',
     description: paymentData.orderBump
       ? 'Ultimate Bundle + Advanced Outreach Scripts'
       : 'Ultimate High-Ticket Sales Bundle',
-    image: '/favicon.ico',
+    image: window.location.origin + '/favicon-new.png', // Absolute URL to prevent mixed content
     prefill: {
       name: paymentData.name,
       email: paymentData.email,
       contact: paymentData.phone,
     },
     theme: {
-      color: '#D4AF37', // Gold color
+      color: '#EAB308', // Updated Gold color to match site
     },
     handler: (response: RazorpayResponse) => {
       console.log('✅ Payment successful:', response);

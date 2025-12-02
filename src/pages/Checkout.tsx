@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,28 @@ const Checkout = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const ua = navigator.userAgent || '';
+    const isInAppBrowser = /FBAN|FBAV|Instagram|Line\\/|MicroMessenger/i.test(ua);
+    const isNotHttps = window.location.protocol !== 'https:';
+
+    if (isInAppBrowser) {
+      toast({
+        title: "Open in Browser for Payment",
+        description: "Please open this page in Chrome or Safari to complete your payment securely.",
+        variant: "destructive",
+      });
+    } else if (isNotHttps) {
+      toast({
+        title: "Secure Connection Required",
+        description: "Please use the https:// version of this page to complete your payment.",
+        variant: "destructive",
+      });
+    }
+  }, []);
 
   const basePrice = 147;
   const bumpPrice = 37;
@@ -75,16 +97,14 @@ const Checkout = () => {
         }),
       };
 
-      // Send emails to buyer and admin
-      try {
-        await sendOrderEmails(orderDetails);
-      } catch (emailError) {
-        console.warn('Email service failed, but payment succeeded:', emailError);
-        // Don't block the payment flow if emails fail
-      }
-
-      // Show success modal and auto-download
+      // Show success modal and auto-download immediately
       showDownloadSuccessModal();
+      setIsProcessing(false);
+
+      // Send emails to buyer and admin in background (don't await)
+      sendOrderEmails(orderDetails).catch(emailError => {
+        console.warn('Email service failed, but payment succeeded:', emailError);
+      });
 
       // Auto-download the bundle
       setTimeout(() => {
@@ -312,7 +332,7 @@ const Checkout = () => {
               <div className="lg:sticky lg:top-24">
                 <div className="bg-gray-800 border border-gray-700 rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl">
                   {/* Trust badges */}
-                  <div className="flex justify-center gap-4 mb-6">
+                  <div className="flex justify-center flex-wrap gap-4 mb-6">
                     <div className="flex items-center gap-1 text-sm text-gray-400">
                       <Shield className="w-4 h-4 text-yellow-400" />
                       <span>Secure</span>
@@ -335,17 +355,11 @@ const Checkout = () => {
                       </p>
                       <div className="space-y-1">
                         <p className="text-xs text-gray-300">
-                          <span className="text-white">USD:</span> ${total} (displayed for convenience)
-                        </p>
-                        <p className="text-xs text-gray-300">
-                          <span className="text-white">INR:</span> ₹{totalINR.toLocaleString()} (actual charge)
+                          <span className="text-white">Total Price:</span> ${total}
                         </p>
                       </div>
                       <p className="text-xs text-gray-400 mt-2">
-                        {paymentMethod === "razorpay"
-                          ? "Processed securely in INR via Razorpay"
-                          : "Processed securely in INR via Razorpay"
-                        }
+                        Processed securely via Razorpay
                       </p>
                     </div>
                   </div>
@@ -464,14 +478,12 @@ const Checkout = () => {
                               <span className="px-2 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs text-yellow-400 font-semibold">Popular</span>
                             </div>
                             <div className="text-xs text-gray-400 mt-1">
-                              Pay in INR • UPI, Cards, NetBanking • Instant processing
+                              Secure Payment • Cards, NetBanking • Instant processing
                             </div>
                           </div>
                         </label>
                       </div>
                     </div>
-
-
 
                     {/* Price Summary */}
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 space-y-2">
@@ -479,7 +491,6 @@ const Checkout = () => {
                         <span className="text-gray-400">Ultimate Bundle</span>
                         <div className="text-right">
                           <span className="text-white font-medium">${basePrice}</span>
-                          <div className="text-xs text-gray-400">₹{basePriceINR.toLocaleString()}</div>
                         </div>
                       </div>
                       {orderBump && (
@@ -487,7 +498,6 @@ const Checkout = () => {
                           <span className="text-gray-400">Script Pack</span>
                           <div className="text-right">
                             <span className="text-white font-medium">${bumpPrice}</span>
-                            <div className="text-xs text-gray-400">₹{bumpPriceINR.toLocaleString()}</div>
                           </div>
                         </div>
                       )}
@@ -496,7 +506,6 @@ const Checkout = () => {
                           <span className="text-white font-semibold">Total</span>
                           <div className="text-right">
                             <span className="text-2xl font-heading font-bold text-yellow-400">${total}</span>
-                            <div className="text-sm text-yellow-300 font-medium">₹{totalINR.toLocaleString()}</div>
                           </div>
                         </div>
                       </div>

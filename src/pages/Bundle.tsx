@@ -84,19 +84,19 @@ const Bundle = () => {
                   <span className="text-2xl font-bold">$147</span>
                   <span className="text-gray-400 line-through">$350+</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-300">
-                  <span className="text-yellow-400">✓</span> Instant Access
-                  <span className="text-yellow-400">✓</span> 500+ Users
-                  <span className="text-yellow-400">✓</span> 30-Day Guarantee
+                <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-2 text-gray-300 text-center">
+                  <span className="whitespace-nowrap"><span className="text-yellow-400">✓</span> Instant Access</span>
+                  <span className="whitespace-nowrap"><span className="text-yellow-400">✓</span> 500+ Users</span>
+                  <span className="whitespace-nowrap"><span className="text-yellow-400">✓</span> 30-Day Guarantee</span>
                 </div>
               </div>
 
               {/* CTA Button */}
               <div className="mb-8">
-                <Link to="/checkout">
-                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base sm:text-lg px-6 sm:px-8 py-4 rounded-lg transition-all transform hover:scale-105">
+                <Link to="/checkout" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm sm:text-lg px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all transform hover:scale-105 whitespace-normal h-auto">
                     Get Bundle $147
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                   </Button>
                 </Link>
               </div>
@@ -231,9 +231,9 @@ const Bundle = () => {
 
               {/* BONUS */}
               <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-500/10 border border-yellow-400/50 rounded-xl p-6 hover:border-yellow-400 transition-colors">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="bg-yellow-400 text-black px-2 py-1 rounded text-sm font-bold">BONUS</span>
-                  <h3 className="text-xl font-bold text-yellow-400">High-Ticket Messenger Conversion Scripts</h3>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="bg-yellow-400 text-black px-2 py-1 rounded text-sm font-bold flex-shrink-0">BONUS</span>
+                  <h3 className="text-xl font-bold text-yellow-400 break-words">High-Ticket Messenger Conversion Scripts</h3>
                 </div>
                 <p className="text-gray-300">
                   Short but powerful chat templates that turn casual conversations into high-intent booked calls within minutes.
@@ -335,10 +335,10 @@ const Bundle = () => {
                     <span className="text-yellow-400">✓</span> 30-Day Guarantee
                   </div>
                 </div>
-                <Link to="/checkout">
-                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-lg transition-all transform hover:scale-105">
+                <Link to="/checkout" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm sm:text-lg px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all transform hover:scale-105 whitespace-normal h-auto">
                     Get the Bundle Now — $147
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                   </Button>
                 </Link>
               </div>
