@@ -25,6 +25,7 @@ export interface RazorpayOptions {
   prefill: {
     name: string;
     email: string;
+    contact?: string;
   };
   theme: {
     color: string;
@@ -98,35 +99,31 @@ export const initiateRazorpayPayment = async (
     prefill: {
       name: paymentData.name,
       email: paymentData.email,
-      contact: paymentData.phone, // Add phone for better mobile experience
-    },
-    notes: {
-      order_type: paymentData.orderBump ? 'bundle_with_bump' : 'bundle_only',
+      contact: paymentData.phone,
     },
     theme: {
       color: '#D4AF37', // Gold color
     },
     handler: (response: RazorpayResponse) => {
+      console.log('✅ Payment successful:', response);
       onSuccess(response);
     },
     modal: {
       ondismiss: () => {
+        console.log('❌ Payment modal dismissed');
         onFailure();
       },
-      escape: false, // Prevent accidental closing on mobile
-      confirm_close: true, // Ask for confirmation before closing
-      backdropclose: false, // Prevent closing by clicking backdrop on mobile
     },
-    retry: {
-      enabled: true, // Enable retry for failed payments
-      max_count: 3, // Allow 3 retry attempts
-    },
-    timeout: 300, // 5 minutes timeout (300 seconds)
-    remember_customer: false,
-  } as any; // Using 'as any' to include extended Razorpay options
+  };
 
-  const razorpay = new window.Razorpay(options);
-  razorpay.open();
+  try {
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
+  } catch (error) {
+    console.error('❌ Error opening Razorpay:', error);
+    alert('Failed to open payment gateway. Please try again.');
+    onFailure();
+  }
 };
 
 /**

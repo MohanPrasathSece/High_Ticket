@@ -159,12 +159,12 @@ const HeroSection = () => {
               </div>
 
               {/* Floating elements */}
-              <div className="absolute -top-4 -right-4 bg-gold text-slate-900 rounded-full w-16 h-16 flex items-center justify-center font-heading font-bold text-sm animate-bounce">
+              <div className="absolute -top-4 right-0 sm:-right-4 bg-gold text-slate-900 rounded-full w-16 h-16 flex items-center justify-center font-heading font-bold text-sm animate-bounce z-20">
                 75%
                 <br />
                 OFF
               </div>
-              <div className="absolute -bottom-4 -left-4 bg-red-500 text-white rounded-full px-4 py-2 text-xs font-body font-bold animate-pulse">
+              <div className="absolute -bottom-4 left-0 sm:-left-4 bg-red-500 text-white rounded-full px-4 py-2 text-xs font-body font-bold animate-pulse z-20">
                 LIMITED
               </div>
             </div>

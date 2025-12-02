@@ -1,11 +1,11 @@
 import ProductCard from "@/components/ProductCard";
-import { FileText, BookOpen, GitBranch, Target, MessageSquare } from "lucide-react";
+import { FileText, BookOpen, GitBranch, Target, MessageSquare, CheckCircle, TrendingUp } from "lucide-react";
 
 const ProductSection = () => {
   const products = [
     {
       icon: <FileText className="w-6 h-6" />,
-      title: "High-Ticket Sales Worksheet",
+      title: "High-Ticket Sales Workbook",
       description: "Your exact call and conversation structure for closing $2,000+ clients with confidence.",
       features: [
         "Step-by-step call framework",
@@ -14,13 +14,43 @@ const ProductSection = () => {
       ],
     },
     {
+      icon: <Target className="w-6 h-6" />,
+      title: "Complete Toolstack",
+      description: "The essential tools and software stack you need to run a high-ticket business efficiently.",
+      features: [
+        "CRM setup guide",
+        "Automation workflows",
+        "Tech stack recommendations",
+      ],
+    },
+    {
+      icon: <MessageSquare className="w-6 h-6" />,
+      title: "AI Promptbook",
+      description: "50+ proven AI prompts to generate content, emails, and sales scripts in seconds.",
+      features: [
+        "Content generation prompts",
+        "Email sequence builders",
+        "Sales objection handlers",
+      ],
+    },
+    {
+      icon: <CheckCircle className="w-6 h-6" />,
+      title: "Closing Checklist",
+      description: "Never miss a step with this comprehensive pre-call and post-call checklist.",
+      features: [
+        "Pre-call preparation",
+        "Live call requirements",
+        "Follow-up protocol",
+      ],
+    },
+    {
       icon: <BookOpen className="w-6 h-6" />,
-      title: "High-Ticket Foundations Guidebook",
-      description: "Learn how to position yourself as a premium authority that clients seek out.",
+      title: "High-Ticket Guidebooks",
+      description: "Deep-dive guides on positioning, pricing, and packaging your high-ticket offers.",
       features: [
         "Premium positioning strategies",
         "Value communication frameworks",
-        "Authority-building tactics",
+        "Pricing psychology",
       ],
     },
     {
@@ -34,23 +64,13 @@ const ProductSection = () => {
       ],
     },
     {
-      icon: <Target className="w-6 h-6" />,
-      title: "Authority-Building Action Plan",
+      icon: <TrendingUp className="w-6 h-6" />,
+      title: "Authority Action Plan",
       description: "Your daily roadmap for generating inbound premium leads on autopilot.",
       features: [
         "30-day implementation plan",
         "Daily action checklists",
         "Lead generation system",
-      ],
-    },
-    {
-      icon: <MessageSquare className="w-6 h-6" />,
-      title: "Toolstack Prompts Pack",
-      description: "Scripts, prompts, and objection-handling frameworks for closing with complete confidence.",
-      features: [
-        "50+ ready-to-use scripts",
-        "Objection handling templates",
-        "AI prompt collection",
       ],
     },
   ];

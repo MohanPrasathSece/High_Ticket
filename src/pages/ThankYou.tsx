@@ -19,7 +19,7 @@ const ThankYou = () => {
     // Check if user has purchase confirmation
     const paymentId = searchParams.get('paymentId');
     const email = searchParams.get('email');
-    
+
     if (paymentId && email) {
       // Store purchase session for download access
       sessionStorage.setItem('purchaseSession', JSON.stringify({
@@ -28,7 +28,7 @@ const ThankYou = () => {
         timestamp: Date.now()
       }));
       setHasAccess(true);
-      
+
       toast({
         title: "Purchase Successful!",
         description: "Your payment has been confirmed. You can now download your bundle.",
@@ -80,7 +80,7 @@ const ThankYou = () => {
                 </div>
               </div>
             )}
-            
+
             {/* Divider for separation */}
             {hasAccess && (
               <div className="border-t border-gray-800 mb-8 sm:mb-12"></div>
@@ -205,13 +205,28 @@ const ThankYou = () => {
 
             <div className="space-y-4 sm:space-y-6">
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">High-Ticket Sales Worksheet</h3>
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">High-Ticket Sales Workbook</h3>
                 <p className="text-sm sm:text-base text-gray-300">Your exact call and conversation structure for closing $2,000+ clients with clarity and confidence.</p>
               </div>
 
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">High-Ticket Foundations Guidebook</h3>
-                <p className="text-sm sm:text-base text-gray-300">How to position yourself as a premium authority that attracts high-value clients naturally.</p>
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">Complete Toolstack</h3>
+                <p className="text-sm sm:text-base text-gray-300">The essential tools and software stack you need to run a high-ticket business efficiently.</p>
+              </div>
+
+              <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">AI Promptbook</h3>
+                <p className="text-sm sm:text-base text-gray-300">50+ proven AI prompts to generate content, emails, and sales scripts in seconds.</p>
+              </div>
+
+              <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">Closing Checklist</h3>
+                <p className="text-sm sm:text-base text-gray-300">Never miss a step with this comprehensive pre-call and post-call checklist.</p>
+              </div>
+
+              <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">High-Ticket Guidebooks</h3>
+                <p className="text-sm sm:text-base text-gray-300">Deep-dive guides on positioning, pricing, and packaging your high-ticket offers.</p>
               </div>
 
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
@@ -220,13 +235,8 @@ const ThankYou = () => {
               </div>
 
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">Authority-Building Action Plan</h3>
+                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">Authority Action Plan</h3>
                 <p className="text-sm sm:text-base text-gray-300">Your daily roadmap for generating inbound premium leads without paid ads or cold outreach.</p>
-              </div>
-
-              <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6">
-                <h3 className="text-lg sm:text-xl font-heading font-bold text-yellow-400 mb-2">Toolstack Prompts Pack</h3>
-                <p className="text-sm sm:text-base text-gray-300">Scripts, prompts, and objection-handling frameworks for closing with complete confidence.</p>
               </div>
 
               <div className="bg-gradient-to-r from-yellow-400/10 to-yellow-400/5 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-4 sm:p-6">
@@ -334,7 +344,7 @@ const ThankYou = () => {
             <p className="text-lg sm:text-xl text-gray-300 mb-6 sm:mb-8 px-2">
               Get instant access to the complete high-ticket sales framework for only $147.
             </p>
-            
+
             <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
               <Button variant="gold" size="lg" className="text-sm sm:text-base md:text-lg font-semibold w-full sm:w-auto px-4 sm:px-6 py-3 mb-6 sm:mb-8">
                 Get Instant Access — $147

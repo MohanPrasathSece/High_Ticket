@@ -30,7 +30,7 @@ const Checkout = () => {
   const basePrice = 147;
   const bumpPrice = 37;
   const total = orderBump ? basePrice + bumpPrice : basePrice;
-  
+
   // Currency conversion (1 USD ≈ 83 INR as of current rate)
   const usdToInrRate = 83;
   const basePriceINR = basePrice * usdToInrRate;
@@ -38,11 +38,13 @@ const Checkout = () => {
   const totalINR = total * usdToInrRate;
 
   const features = [
-    { icon: CreditCard, text: "High-Ticket Sales Worksheet" },
-    { icon: CreditCard, text: "High-Ticket Foundations Guidebook" },
+    { icon: CreditCard, text: "High-Ticket Sales Workbook" },
+    { icon: CreditCard, text: "Complete Toolstack" },
+    { icon: CreditCard, text: "AI Promptbook" },
+    { icon: CreditCard, text: "Closing Checklist" },
+    { icon: CreditCard, text: "High-Ticket Guidebooks" },
     { icon: CreditCard, text: "Sales Funnel Blueprint" },
-    { icon: CreditCard, text: "Authority-Building Action Plan" },
-    { icon: CreditCard, text: "Toolstack Prompts Pack" },
+    { icon: CreditCard, text: "Authority Action Plan" },
     { icon: CreditCard, text: "BONUS: Messenger Conversion Scripts" },
   ];
 
@@ -83,7 +85,7 @@ const Checkout = () => {
 
       // Show success modal and auto-download
       showDownloadSuccessModal();
-      
+
       // Auto-download the bundle
       setTimeout(() => {
         autoDownloadBundle();
@@ -111,7 +113,7 @@ const Checkout = () => {
   const handleRazorpayPayment = async () => {
     try {
       console.log('🚀 Initiating Razorpay payment...');
-      
+
       const paymentData = {
         name: formData.name,
         email: formData.email,
@@ -137,7 +139,7 @@ const Checkout = () => {
           handlePaymentFailure();
         }
       );
-      
+
     } catch (error) {
       console.error("Razorpay error:", error);
       toast({
@@ -192,7 +194,7 @@ const Checkout = () => {
     setShowDownloadModal(true);
     setDownloadProgress(0);
     setDownloadStatus('preparing');
-    
+
     // Simulate preparation progress
     const progressInterval = setInterval(() => {
       setDownloadProgress(prev => {
@@ -207,29 +209,29 @@ const Checkout = () => {
 
   const autoDownloadBundle = () => {
     setDownloadStatus('downloading');
-    
+
     // Create download link
     const link = document.createElement('a');
     link.href = '/bundle.zip';
     link.download = 'bundle.zip';
     link.style.display = 'none';
-    
+
     // Trigger download
     document.body.appendChild(link);
     link.click();
-    
+
     // Clean up
     setTimeout(() => {
       if (document.body.contains(link)) {
         document.body.removeChild(link);
       }
     }, 100);
-    
+
     // Show completed status
     setTimeout(() => {
       setDownloadStatus('completed');
       setDownloadProgress(100);
-      
+
       // Close modal after 3 seconds
       setTimeout(() => {
         setShowDownloadModal(false);
@@ -256,16 +258,16 @@ const Checkout = () => {
               {/* Left Column - Product Details */}
               <div className="space-y-6">
                 {/* Flash Sale Banner */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full">
-                  <AlertCircle className="w-4 h-4 text-yellow-400" />
-                  <span className="text-sm font-body font-semibold text-yellow-400">
+                <div className="flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full w-fit max-w-full">
+                  <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
+                  <span className="text-sm font-body font-semibold text-yellow-400 truncate sm:whitespace-normal sm:overflow-visible">
                     ⚡ FLASH SALE - 75% OFF - Only 8 Spots Left!
                   </span>
                 </div>
 
                 {/* Product Title */}
                 <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-white mb-4 leading-tight">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-white mb-4 leading-tight break-words">
                     Stop Chasing Low-Ticket Clients.
                     <br className="hidden sm:block" />
                     <span className="text-yellow-400">Start Closing $2,000+</span>
@@ -340,8 +342,8 @@ const Checkout = () => {
                         </p>
                       </div>
                       <p className="text-xs text-gray-400 mt-2">
-                        {paymentMethod === "razorpay" 
-                          ? "Processed securely in INR via Razorpay" 
+                        {paymentMethod === "razorpay"
+                          ? "Processed securely in INR via Razorpay"
                           : "Processed securely in INR via Razorpay"
                         }
                       </p>
@@ -376,7 +378,7 @@ const Checkout = () => {
                         />
                       </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="phone" className="text-gray-300 font-body font-medium mb-2 block text-sm">Phone Number</Label>
@@ -416,6 +418,33 @@ const Checkout = () => {
                       />
                     </div>
 
+                    {/* Order Bump */}
+                    <div className="bg-gray-800 border-2 border-yellow-400/50 rounded-xl p-6 shadow-lg shadow-yellow-400/5 mb-6">
+                      <label className="flex items-start gap-4 cursor-pointer">
+                        <Checkbox
+                          checked={orderBump}
+                          onCheckedChange={(checked) => setOrderBump(checked as boolean)}
+                          className="mt-1.5 border-yellow-400 data-[state=checked]:bg-yellow-400 data-[state=checked]:border-yellow-400 w-6 h-6"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="px-3 py-1 bg-red-500 text-white rounded-full text-xs font-bold animate-pulse">
+                              ONE-TIME OFFER
+                            </span>
+                            <span className="text-yellow-400 text-sm font-bold">
+                              SAVE 75% TODAY
+                            </span>
+                          </div>
+                          <h3 className="text-xl font-heading font-bold text-white mb-2 break-words">
+                            Add Advanced Script Pack - Just $37
+                          </h3>
+                          <p className="text-sm text-gray-300 leading-relaxed break-words">
+                            Get 50+ proven outreach scripts for DM, email, and calls. Copy-paste these templates to book more meetings instantly. <span className="text-yellow-400 font-semibold">Normally $147.</span>
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+
                     {/* Payment Method Selection */}
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
                       <Label className="text-gray-300 font-body font-medium mb-3 block text-sm">Choose Payment Method</Label>
@@ -442,29 +471,7 @@ const Checkout = () => {
                       </div>
                     </div>
 
-                    {/* Order Bump */}
-                    <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <Checkbox
-                          checked={orderBump}
-                          onCheckedChange={(checked) => setOrderBump(checked as boolean)}
-                          className="mt-1 border-yellow-400 data-[state=checked]:bg-yellow-400 data-[state=checked]:border-yellow-400 w-4 h-4"
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="px-2 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs font-body text-yellow-400 font-semibold animate-pulse">
-                              ONE-TIME OFFER - 75% OFF
-                            </span>
-                          </div>
-                          <h3 className="text-white font-semibold">
-                            Add Advanced Script Pack - Just $37
-                          </h3>
-                          <p className="text-xs text-gray-300">
-                            50+ outreach scripts for DM, email, and calls
-                          </p>
-                        </div>
-                      </label>
-                    </div>
+
 
                     {/* Price Summary */}
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 space-y-2">
@@ -510,8 +517,8 @@ const Checkout = () => {
                         </>
                       ) : (
                         <>
-                          🚀 Pay with Razorpay — $${total} (₹${totalINR.toLocaleString()})
-                          <ArrowRight className="w-5 h-5 ml-2" />
+                          <span className="truncate">Get Instant Access — ${total}</span>
+                          <ArrowRight className="w-5 h-5 ml-2 flex-shrink-0" />
                         </>
                       )}
                     </Button>
@@ -531,7 +538,7 @@ const Checkout = () => {
         </div>
       </main>
       <FooterSection />
-      
+
       {/* Download Success Modal */}
       {showDownloadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -545,32 +552,31 @@ const Checkout = () => {
                   <Download className="w-8 h-8 text-yellow-400 animate-pulse" />
                 )}
               </div>
-              
+
               <h3 className="text-xl font-bold text-white mb-2">
                 {downloadStatus === 'preparing' && 'Preparing Your Bundle...'}
                 {downloadStatus === 'downloading' && 'Downloading Bundle...'}
                 {downloadStatus === 'completed' && 'Download Complete!'}
               </h3>
-              
+
               <p className="text-gray-300 mb-6">
                 {downloadStatus === 'preparing' && 'Your High-Ticket Sales Mastery bundle is being prepared...'}
                 {downloadStatus === 'downloading' && 'Your bundle is downloading to your device...'}
                 {downloadStatus === 'completed' && 'bundle.zip has been downloaded to your device!'}
               </p>
-              
+
               {/* Progress Bar */}
               <div className="mb-4">
                 <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      downloadStatus === 'completed' ? 'bg-green-400' : 'bg-yellow-400'
-                    }`}
+                  <div
+                    className={`h-2 rounded-full transition-all duration-300 ${downloadStatus === 'completed' ? 'bg-green-400' : 'bg-yellow-400'
+                      }`}
                     style={{ width: `${downloadProgress}%` }}
                   ></div>
                 </div>
                 <p className="text-sm text-gray-400 mt-2">{downloadProgress}% Complete</p>
               </div>
-              
+
               {/* Download Details */}
               <div className="bg-gray-800 rounded-lg p-4 mb-6">
                 <div className="space-y-2 text-sm">
@@ -588,13 +594,13 @@ const Checkout = () => {
                   </div>
                 </div>
               </div>
-              
+
               {downloadStatus === 'completed' && (
                 <div className="text-yellow-400 text-sm font-medium">
                   ✓ Download started! Check your downloads folder.
                 </div>
               )}
-              
+
               {downloadStatus === 'downloading' && (
                 <div className="text-yellow-400 text-sm font-medium">
                   ⬇️ Download in progress...

@@ -67,7 +67,7 @@ const Bundle = () => {
                 </div>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 sm:mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-white mb-4 sm:mb-6 leading-tight break-words">
                 Stop Chasing Low-Ticket Clients.
                 <br className="hidden sm:block" />
                 <span className="text-yellow-400">Start Closing</span> $2,000+ High-Ticket
