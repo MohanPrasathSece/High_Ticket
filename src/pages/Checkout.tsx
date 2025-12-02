@@ -30,8 +30,13 @@ const Checkout = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const ua = navigator.userAgent || '';
-    const isInAppBrowser = /FBAN|FBAV|Instagram|Line\\/|MicroMessenger/i.test(ua);
+    const ua = (navigator.userAgent || '').toLowerCase();
+    const isInAppBrowser =
+      ua.includes('fban') ||
+      ua.includes('fbav') ||
+      ua.includes('instagram') ||
+      ua.includes('line/') ||
+      ua.includes('micromessenger');
     const isNotHttps = window.location.protocol !== 'https:';
 
     if (isInAppBrowser) {
