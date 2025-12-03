@@ -101,20 +101,6 @@ const Bundle = () => {
                   </Button>
                 </Link>
               </div>
-
-              {/* Live Currency Converter */}
-              <div className="max-w-2xl mx-auto mb-8 sm:mb-10">
-                <div className="bg-gray-900/70 border border-gray-700 rounded-2xl p-4 sm:p-6 shadow-lg">
-                  <h2 className="text-lg sm:text-xl font-heading font-bold text-white mb-2 text-center">
-                    Live Currency Converter
-                  </h2>
-                  <p className="text-xs sm:text-sm text-gray-300 mb-4 text-center">
-                    Check the bundle price in your local currency. Payments are processed securely in Indian Rupees (INR)
-                    via Razorpay; your bank handles the final conversion.
-                  </p>
-                  <CurrencyConverter baseAmount={147} baseCurrency="USD" showConversionHistory={false} />
-                </div>
-              </div>
             </div>
           </div>
         </section>

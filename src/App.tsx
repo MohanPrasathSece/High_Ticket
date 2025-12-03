@@ -9,6 +9,7 @@ import Checkout from "./pages/Checkout";
 import ThankYou from "./pages/ThankYou";
 import Download from "./pages/Download";
 import CurrencyConverterPage from "./pages/CurrencyConverterPage";
+import Product from "./pages/Product";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Bundle />} />
           <Route path="/bundle" element={<Bundle />} />
+          <Route path="/product" element={<Product />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/currency" element={<CurrencyConverterPage />} />

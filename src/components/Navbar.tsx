@@ -10,7 +10,8 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: "/bundle", label: "Features" },
+    { path: "/", label: "Home" },
+    { path: "/product", label: "Product" },
     { path: "/checkout", label: "Pricing" },
     { path: "/currency", label: "Currency Converter" },
     { path: "/contact", label: "Support" },
