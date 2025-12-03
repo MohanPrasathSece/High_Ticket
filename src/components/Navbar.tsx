@@ -11,8 +11,9 @@ const Navbar = () => {
 
   const navItems = [
     { path: "/bundle", label: "Features" },
-    { path: "/contact", label: "Support" },
     { path: "/checkout", label: "Pricing" },
+    { path: "/currency", label: "Currency Converter" },
+    { path: "/contact", label: "Support" },
   ];
 
   const handleNavClick = (path: string) => {

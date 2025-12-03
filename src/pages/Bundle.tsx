@@ -4,6 +4,7 @@ import FooterSection from "@/components/sections/FooterSection";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import CurrencyConverter from "@/components/CurrencyConverter";
 
 const handleNavClick = (path: string) => {
   // Scroll to top
@@ -99,6 +100,20 @@ const Bundle = () => {
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                   </Button>
                 </Link>
+              </div>
+
+              {/* Live Currency Converter */}
+              <div className="max-w-2xl mx-auto mb-8 sm:mb-10">
+                <div className="bg-gray-900/70 border border-gray-700 rounded-2xl p-4 sm:p-6 shadow-lg">
+                  <h2 className="text-lg sm:text-xl font-heading font-bold text-white mb-2 text-center">
+                    Live Currency Converter
+                  </h2>
+                  <p className="text-xs sm:text-sm text-gray-300 mb-4 text-center">
+                    Check the bundle price in your local currency. Payments are processed securely in Indian Rupees (INR)
+                    via Razorpay; your bank handles the final conversion.
+                  </p>
+                  <CurrencyConverter baseAmount={147} baseCurrency="USD" showConversionHistory={false} />
+                </div>
               </div>
             </div>
           </div>
