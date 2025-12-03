@@ -12,7 +12,7 @@ const Product = () => {
         <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8">
           <div className="max-w-5xl mx-auto text-gray-100">
             {/* Page Header */}
-            <header className="mb-10 sm:mb-12">
+            <header className="mb-8 sm:mb-10">
               <p className="text-xs uppercase tracking-[0.2em] text-yellow-400 mb-3 font-semibold">Product Overview</p>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-white mb-4 leading-tight">
                 High-Ticket Sales Bundle
@@ -23,6 +23,33 @@ const Product = () => {
                 digital product delivered instantly after payment.
               </p>
             </header>
+
+            {/* 6-Figure Commission Blueprint Visual */}
+            <div className="mb-10 sm:mb-12 flex flex-col lg:flex-row items-center gap-6 bg-gray-900/70 border border-gray-800 rounded-2xl p-4 sm:p-6">
+              <div className="w-full lg:w-1/2">
+                <img
+                  src="/product.jpg"
+                  alt="6-Figure Commission Blueprint - Your complete high ticket affiliate system"
+                  className="w-full h-auto rounded-xl object-cover shadow-lg"
+                />
+              </div>
+              <div className="w-full lg:w-1/2 text-center lg:text-left">
+                <p className="text-xs uppercase tracking-[0.25em] text-purple-300 mb-2 font-semibold">
+                  Included Inside This Bundle
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-white mb-2">
+                  6-Figure Commission Blueprint
+                </h2>
+                <p className="text-sm sm:text-base text-gray-300 mb-2">
+                  Your complete high ticket affiliate system to generate hundreds or even thousands of dollars per day in
+                  commissions.
+                </p>
+                <p className="text-xs sm:text-sm text-gray-400">
+                  Trusted by creators and packed with implementation templates, this blueprint is part of the High-Ticket
+                  Sales Bundle and helps you close more premium offers with a proven system.
+                </p>
+              </div>
+            </div>
 
             {/* What is Included */}
             <section className="mb-10 sm:mb-12">
