@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,11 +10,15 @@ import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { initiateRazorpayPayment, RazorpayResponse } from "@/lib/razorpay";
 import { sendOrderEmails } from "@/lib/emailService";
+import CurrencyConverter from "@/components/CurrencyConverter";
+import { detectUserCurrency, formatCurrency, convertCurrency } from "@/lib/currencyConverter";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const [orderBump, setOrderBump] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState(detectUserCurrency());
+  const [showCurrencyConverter, setShowCurrencyConverter] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -31,11 +35,51 @@ const Checkout = () => {
   const bumpPrice = 37;
   const total = orderBump ? basePrice + bumpPrice : basePrice;
 
-  // Currency conversion (1 USD ≈ 83 INR as of current rate)
-  const usdToInrRate = 83;
-  const basePriceINR = basePrice * usdToInrRate;
-  const bumpPriceINR = bumpPrice * usdToInrRate;
-  const totalINR = total * usdToInrRate;
+  // Dynamic currency conversion
+  const [convertedPrices, setConvertedPrices] = useState({
+    basePrice: basePrice,
+    bumpPrice: bumpPrice,
+    total: total,
+    basePriceINR: basePrice * 83,
+    bumpPriceINR: bumpPrice * 83,
+    totalINR: total * 83
+  });
+
+  // Update prices when currency changes
+  const updatePricesForCurrency = async (currency: string) => {
+    if (currency === 'USD') {
+      setConvertedPrices({
+        basePrice: basePrice,
+        bumpPrice: bumpPrice,
+        total: total,
+        basePriceINR: basePrice * 83,
+        bumpPriceINR: bumpPrice * 83,
+        totalINR: total * 83
+      });
+    } else {
+      try {
+        const convertedBase = await convertCurrency(basePrice, 'USD', currency);
+        const convertedBump = await convertCurrency(bumpPrice, 'USD', currency);
+        const convertedTotal = await convertCurrency(total, 'USD', currency);
+        
+        setConvertedPrices({
+          basePrice: convertedBase,
+          bumpPrice: convertedBump,
+          total: convertedTotal,
+          basePriceINR: basePrice * 83,
+          bumpPriceINR: bumpPrice * 83,
+          totalINR: total * 83
+        });
+      } catch (error) {
+        console.error('Failed to convert prices:', error);
+      }
+    }
+  };
+
+  // Update prices when selected currency or order bump changes
+  React.useEffect(() => {
+    updatePricesForCurrency(selectedCurrency);
+  }, [selectedCurrency, orderBump]);
 
   const features = [
     { icon: CreditCard, text: "High-Ticket Sales Workbook" },
@@ -118,7 +162,7 @@ const Checkout = () => {
         phone: formData.phone,
         company: formData.company,
         message: formData.message,
-        amount: totalINR,
+        amount: convertedPrices.totalINR,
         orderBump: orderBump,
       };
 
@@ -325,21 +369,40 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  {/* Currency banner */}
-                  <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 mb-6">
+                  {/* Currency banner with converter */}
+                  <div className="bg-gray-700 border border-gray-600 rounded-lg p-5 mb-6 space-y-4">
                     <div className="text-center">
-                      <p className="text-sm text-yellow-400 font-semibold mb-1">
-                        💰 Pricing Information
+                      <p className="text-base text-yellow-400 font-semibold mb-2">
+                        💰 Global Pricing & Currency
                       </p>
-                      <div className="space-y-1">
-                        <p className="text-xs text-gray-300">
-                          <span className="text-white">Total Price:</span> ${total}
+                      <div className="space-y-2 text-sm text-gray-300">
+                        <p>
+                          <span className="text-white font-medium">Base Price (USD):</span> ${total}
+                        </p>
+                        <p>
+                          <span className="text-white font-medium">Approx. in your currency ({selectedCurrency}):</span>{" "}
+                          <span className="font-semibold text-yellow-300">
+                            {formatCurrency(convertedPrices.total, selectedCurrency)}
+                          </span>
+                        </p>
+                        <p>
+                          <span className="text-white font-medium">Charged Amount (INR via Razorpay):</span>{" "}
+                          <span className="font-semibold text-yellow-300">
+                            ₹{convertedPrices.totalINR.toFixed(0)}
+                          </span>
                         </p>
                       </div>
-                      <p className="text-xs text-gray-400 mt-2">
-                        Processed securely via Razorpay
+                      <p className="text-sm text-gray-300 mt-3">
+                        Final amount may vary slightly based on your bank's exchange rate. All payments are securely
+                        processed in Indian Rupees (INR) via Razorpay and are accepted from all countries.
                       </p>
                     </div>
+
+                    <CurrencyConverter
+                      baseAmount={total}
+                      baseCurrency="USD"
+                      compact
+                    />
                   </div>
 
                   {/* Form */}
@@ -464,26 +527,38 @@ const Checkout = () => {
                     </div>
 
                     {/* Price Summary */}
-                    <div className="bg-gray-700 border border-gray-600 rounded-lg p-4 space-y-2">
-                      <div className="flex justify-between text-sm">
+                    <div className="bg-gray-700 border border-gray-600 rounded-lg p-5 space-y-3">
+                      <div className="flex justify-between text-base">
                         <span className="text-gray-400">Ultimate Bundle</span>
                         <div className="text-right">
-                          <span className="text-white font-medium">${basePrice}</span>
+                          <span className="text-white font-semibold">${basePrice}</span>
+                          <div className="text-xs text-gray-300">
+                            {formatCurrency(convertedPrices.basePrice, selectedCurrency)}
+                          </div>
                         </div>
                       </div>
                       {orderBump && (
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-base">
                           <span className="text-gray-400">Script Pack</span>
                           <div className="text-right">
-                            <span className="text-white font-medium">${bumpPrice}</span>
+                            <span className="text-white font-semibold">${bumpPrice}</span>
+                            <div className="text-xs text-gray-300">
+                              {formatCurrency(convertedPrices.bumpPrice, selectedCurrency)}
+                            </div>
                           </div>
                         </div>
                       )}
                       <div className="border-t border-gray-600 pt-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-white font-semibold">Total</span>
+                          <span className="text-white font-semibold text-base">Total</span>
                           <div className="text-right">
                             <span className="text-2xl font-heading font-bold text-yellow-400">${total}</span>
+                            <div className="text-xs text-gray-300 mt-1">
+                              {formatCurrency(convertedPrices.total, selectedCurrency)} ({selectedCurrency})
+                            </div>
+                            <div className="text-xs text-gray-200 font-medium mt-1">
+                              ₹{convertedPrices.totalINR.toFixed(0)} (charged in INR via Razorpay)
+                            </div>
                           </div>
                         </div>
                       </div>
