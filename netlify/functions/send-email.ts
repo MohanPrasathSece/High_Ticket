@@ -76,13 +76,17 @@ const handler: Handler = async (event) => {
     // Direct ZIP bundle link served from /public/bundle.zip
     const bundleZipUrl = `${siteUrl}/bundle.zip`;
 
-    // Single direct download button for the full bundle
+    // Single direct download button for the full bundle plus plain text fallback link
     const downloadLinksHtml = `
             <div style="margin: 10px 0;">
               <a href="${bundleZipUrl}"
                  style="display: inline-block; background: #1a1a1a; color: #D4AF37; padding: 12px 20px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s;">
                 📦 Download Your Complete High-Ticket Mastery Bundle (ZIP)
               </a>
+              <p style="margin-top: 8px; font-size: 13px; color: #555;">
+                If the button above does not work, copy and paste this link into your browser:<br/>
+                <a href="${bundleZipUrl}" style="color: #1a73e8; word-break: break-all;">${bundleZipUrl}</a>
+              </p>
             </div>
         `;
 

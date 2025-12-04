@@ -141,6 +141,29 @@ const Checkout = () => {
       })
     );
 
+    // Since Razorpay payment links can't reliably redirect back with confirmation,
+    // we send the bundle email immediately after opening the payment link.
+    // NOTE: This means a user could technically get the bundle without completing payment,
+    // but it guarantees delivery in this payment-link setup.
+    const now = new Date();
+    const orderDetails = {
+      name: paymentData.name,
+      email: paymentData.email,
+      amount: paymentData.amount,
+      orderBump: paymentData.orderBump,
+      paymentId: `PENDING-LINK-${now.getTime()}`,
+      orderId: undefined,
+      paymentMethod: "razorpay_payment_link",
+      date: now.toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    };
+
+    void sendOrderEmails(orderDetails).catch((err) => {
+      console.error("Email sending failed (payment link flow)", err);
+    });
+
     handlePaymentLinkClick(
       paymentData,
       defaultPaymentLinkConfig,
