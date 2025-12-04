@@ -14,15 +14,12 @@ export interface OrderDetails {
  */
 export const sendOrderEmails = async (orderDetails: OrderDetails): Promise<void> => {
     console.log('📧 Sending order confirmation emails...');
-    
-    // Determine the appropriate endpoint based on environment
-    const isDevelopment = import.meta.env.DEV;
-    const endpoint = isDevelopment 
-        ? '/api/send-email'  // For local development with Vite
-        : '/.netlify/functions/send-email';  // For Netlify production
-    
-    console.log('🌍 Environment:', isDevelopment ? 'Development' : 'Production');
-    console.log('📡 Using endpoint:', endpoint);
+
+    // Provider-agnostic API endpoint. Configure your hosting so that
+    // /api/send-email routes to your email handler (serverless function, API route, etc.).
+    const endpoint = '/api/send-email';
+
+    console.log('📡 Using email endpoint:', endpoint);
 
     try {
         // Use the appropriate email endpoint
@@ -90,14 +87,13 @@ export const sendOrderEmails = async (orderDetails: OrderDetails): Promise<void>
  * Real email service integration example (for production)
  */
 export const sendRealEmails = async (orderDetails: OrderDetails): Promise<void> => {
-    // This would be the real implementation using:
-    // - SendGrid API
-    // - Resend API  
-    // - Netlify functions
-    // - Or any other email service
+    // This would be the real implementation using any backend:
+    // - Custom Node/Express API route
+    // - Serverless functions (Vercel, Netlify, AWS Lambda, etc.)
+    // - Third-party email APIs (SendGrid, Resend, etc.)
     
     try {
-        const response = await fetch('/.netlify/functions/send-email', {
+        const response = await fetch('/api/send-email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

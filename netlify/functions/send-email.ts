@@ -73,35 +73,18 @@ const handler: Handler = async (event) => {
     // Get site URL from environment
     const siteUrl = process.env.VITE_SITE_URL || 'https://your-site.netlify.app';
 
-    // Bundle files list
-    const bundleFiles = [
-      { name: 'High-Ticket Affiliate Marketing - Book.pdf', display: '📚 High-Ticket Affiliate Marketing - Complete Book (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Workbook.pdf', display: '📝 High-Ticket Affiliate Marketing - Workbook (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Checklist.pdf', display: '✅ High-Ticket Affiliate Marketing - Checklist (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Guide 1_3.pdf', display: '📖 High-Ticket Affiliate Marketing - Guide 1/3 (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Guide 2_3.pdf', display: '📖 High-Ticket Affiliate Marketing - Guide 2/3 (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Guide 3_3.pdf', display: '📖 High-Ticket Affiliate Marketing - Guide 3/3 (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Prompts.pdf', display: '💡 High-Ticket Affiliate Marketing - Prompts (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Toolstack.pdf', display: '🛠️ High-Ticket Affiliate Marketing - Toolstack (PDF)' },
-      { name: 'High-Ticket Affiliate Marketing - Book.docx', display: '📚 High-Ticket Affiliate Marketing - Book (DOCX)' },
-      { name: 'workbook2.docx', display: '📝 High-Ticket Affiliate Marketing - Workbook (DOCX)' },
-      { name: 'High-Ticket Affiliate Marketing - Checklist.docx', display: '✅ High-Ticket Affiliate Marketing - Checklist (DOCX)' },
-      { name: 'High-Ticket Affiliate Marketing - Guide 1_3.docx', display: '📖 High-Ticket Affiliate Marketing - Guide 1/3 (DOCX)' },
-      { name: 'High-Ticket Affiliate Marketing - Guide 2_3.docx', display: '📖 High-Ticket Affiliate Marketing - Guide 2/3 (DOCX)' },
-      { name: 'High-Ticket Affiliate Marketing - Guide 3_3.docx', display: '📖 High-Ticket Affiliate Marketing - Guide 3/3 (DOCX)' },
-      { name: 'High-Ticket Affiliate Marketing - Prompts.docx', display: '💡 High-Ticket Affiliate Marketing - Prompts (DOCX)' },
-      { name: 'High-Ticket Affiliate Marketing - Toolstack.docx', display: '🛠️ High-Ticket Affiliate Marketing - Toolstack (DOCX)' },
-    ];
+    // Direct ZIP bundle link served from /public/bundle.zip
+    const bundleZipUrl = `${siteUrl}/bundle.zip`;
 
-    // Generate download links HTML
-    const downloadLinksHtml = bundleFiles.map(file => `
+    // Single direct download button for the full bundle
+    const downloadLinksHtml = `
             <div style="margin: 10px 0;">
-              <a href="${siteUrl}/.netlify/functions/download-file?file=${encodeURIComponent(file.name)}" 
+              <a href="${bundleZipUrl}"
                  style="display: inline-block; background: #1a1a1a; color: #D4AF37; padding: 12px 20px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: all 0.3s;">
-                ${file.display}
+                📦 Download Your Complete High-Ticket Mastery Bundle (ZIP)
               </a>
             </div>
-        `).join('');
+        `;
 
     // Buyer email HTML
     const buyerEmailHtml = `
@@ -210,17 +193,68 @@ const handler: Handler = async (event) => {
       </html>
     `;
 
-    // Send email to buyer
+    // Send email to buyer with bundle.zip attached and download link in body
     console.log('📤 Sending buyer email to:', orderDetails.email);
-    const buyerResult = await transporter.sendMail({
-      from: `"High-Ticket Sales" <${process.env.GMAIL_USER}>`,
-      to: orderDetails.email,
-      subject: '🎉 Order Confirmed - High-Ticket Sales Bundle',
-      html: buyerEmailHtml,
-    });
-    console.log('✅ Buyer email sent successfully:', buyerResult.messageId);
 
-    // Send email to admin
+    try {
+      // Fetch bundle.zip as buffer for proper attachment
+      const bundleResponse = await fetch(bundleZipUrl);
+      const bundleBuffer = await bundleResponse.arrayBuffer();
+
+      const buyerResult = await transporter.sendMail({
+        from: `"High-Ticket Sales" <${process.env.GMAIL_USER}>`,
+        to: orderDetails.email,
+        subject: '🎉 Order Confirmed - High-Ticket Sales Bundle',
+        html: buyerEmailHtml,
+        attachments: [
+          {
+            filename: 'bundle.zip',
+            content: Buffer.from(bundleBuffer),
+          },
+        ],
+      });
+      console.log('✅ Buyer email sent successfully:', buyerResult.messageId);
+    } catch (buyerError) {
+      console.error('❌ Buyer email failed:', buyerError);
+
+      // Notify admin that buyer email failed so they can manually send the bundle
+      if (process.env.ADMIN_EMAIL) {
+        try {
+          console.log('📤 Notifying admin about buyer email failure:', process.env.ADMIN_EMAIL);
+          const fallbackAdminResult = await transporter.sendMail({
+            from: `"High-Ticket Sales System" <${process.env.GMAIL_USER}>`,
+            to: process.env.ADMIN_EMAIL,
+            subject: `⚠️ ACTION REQUIRED: Failed to send bundle to ${orderDetails.email}`,
+            html: `
+              <p>The system failed to send the High-Ticket Sales bundle to the buyer.</p>
+              <p><strong>Please manually send the bundle.zip to the customer and verify payment.</strong></p>
+              <h3>Buyer Details</h3>
+              <ul>
+                <li><strong>Name:</strong> ${orderDetails.name}</li>
+                <li><strong>Email:</strong> ${orderDetails.email}</li>
+                <li><strong>Amount:</strong> ₹${orderDetails.amount}</li>
+                <li><strong>Payment ID:</strong> ${orderDetails.paymentId}</li>
+                <li><strong>Date:</strong> ${orderDetails.date}</li>
+                <li><strong>Order Bump:</strong> ${orderDetails.orderBump ? 'Yes' : 'No'}</li>
+              </ul>
+              <p>You can also share this direct bundle link: <a href="${bundleZipUrl}">${bundleZipUrl}</a></p>
+            `,
+          });
+          console.log('✅ Admin notified about buyer email failure:', fallbackAdminResult.messageId);
+        } catch (notifyError) {
+          console.error('❌ Failed to notify admin about buyer email failure:', notifyError);
+        }
+      }
+
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          error: 'Failed to send buyer email. Admin has been notified to send the bundle manually.',
+        }),
+      };
+    }
+
+    // Send email to admin (standard order notification)
     console.log('📤 Sending admin email to:', process.env.ADMIN_EMAIL);
     const adminResult = await transporter.sendMail({
       from: `"High-Ticket Sales System" <${process.env.GMAIL_USER}>`,

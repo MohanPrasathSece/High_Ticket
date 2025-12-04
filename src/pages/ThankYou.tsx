@@ -5,6 +5,7 @@ import FooterSection from "@/components/sections/FooterSection";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, ArrowRight, Download, Mail, Shield, Clock, Star, Users } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
+import { sendOrderEmails, OrderDetails } from "@/lib/emailService";
 
 const handleNavClick = (path: string) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -13,6 +14,8 @@ const handleNavClick = (path: string) => {
 const ThankYou = () => {
   const [searchParams] = useSearchParams();
   const [hasAccess, setHasAccess] = useState(false);
+  const [showThankYouModal, setShowThankYouModal] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +36,73 @@ const ThankYou = () => {
         title: "Purchase Successful!",
         description: "Your payment has been confirmed. You can now download your bundle.",
       });
+
+      // Show thank you modal
+      setShowThankYouModal(true);
+
+      // Auto-close thank you modal after a few seconds
+      const timer = setTimeout(() => {
+        setShowThankYouModal(false);
+      }, 6000);
+
+      // Trigger email with bundle.zip if not already sent in this session
+      const emailSentKey = `emailSent_${email}_${paymentId}`;
+      const alreadySent = sessionStorage.getItem(emailSentKey);
+
+      if (!alreadySent) {
+        const pendingOrderRaw = sessionStorage.getItem('pendingOrder');
+        let orderDetails: OrderDetails | null = null;
+
+        if (pendingOrderRaw) {
+          try {
+            const pendingOrder = JSON.parse(pendingOrderRaw);
+            const now = new Date();
+            orderDetails = {
+              name: pendingOrder.name,
+              email: pendingOrder.email,
+              amount: pendingOrder.amount,
+              orderBump: pendingOrder.orderBump,
+              paymentId: paymentId,
+              orderId: undefined,
+              paymentMethod: "razorpay_payment_link",
+              date: now.toLocaleString("en-US", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              }),
+            };
+          } catch (e) {
+            console.error("Failed to parse pendingOrder from sessionStorage", e);
+          }
+        }
+
+        if (orderDetails) {
+          setIsSendingEmail(true);
+          void sendOrderEmails(orderDetails)
+            .then(() => {
+              sessionStorage.setItem(emailSentKey, 'true');
+              toast({
+                title: "Bundle Emailed",
+                description: "Your High-Ticket Sales Mastery bundle has been sent to your inbox.",
+              });
+            })
+            .catch((err) => {
+              console.error("Error sending order emails from ThankYou page", err);
+              toast({
+                title: "Email Error",
+                description: "We could not send the email automatically. Please contact support if you don't receive it.",
+                variant: "destructive",
+              });
+            })
+            .finally(() => {
+              setIsSendingEmail(false);
+            });
+        }
+
+      }
+
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [searchParams]);
 
@@ -47,6 +117,31 @@ const ThankYou = () => {
     <>
       <Navbar />
       <main className="pt-16 min-h-screen">
+        {showThankYouModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-gray-900 border border-gray-700 rounded-xl p-8 max-w-md w-full mx-4 text-center">
+              <div className="w-16 h-16 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-yellow-400" />
+              </div>
+              <h2 className="text-2xl font-heading font-bold text-white mb-2">Thank You for Your Purchase!</h2>
+              <p className="text-gray-300 mb-4">
+                Your payment was successful. Your High-Ticket Sales Mastery bundle will arrive in your inbox shortly.
+              </p>
+              <p className="text-sm text-gray-400 mb-4">
+                {isSendingEmail
+                  ? 'We are sending your bundle via email...'
+                  : 'If you do not see the email, please check your spam or promotions folder.'}
+              </p>
+              <Button
+                variant="gold"
+                className="w-full"
+                onClick={() => setShowThankYouModal(false)}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        )}
         {/* Hero Section */}
         <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-left">

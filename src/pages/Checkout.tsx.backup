@@ -19,7 +19,6 @@ const Checkout = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState(detectUserCurrency());
   const [showCurrencyConverter, setShowCurrencyConverter] = useState(false);
-  const [showThankYouModal, setShowThankYouModal] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -101,13 +100,17 @@ const Checkout = () => {
 
   const handlePaymentSuccess = () => {
     console.log("✅ Payment link opened successfully");
-
+    
     // Show success message
     toast({
       title: "Payment Link Opened",
-      description:
-        "Complete your payment in the new Razorpay window. After successful payment you'll be redirected and receive your bundle via email.",
+      description: "Complete your payment in the new window. You'll receive the bundle via email after payment.",
     });
+
+    // Navigate to a payment confirmation page
+    setTimeout(() => {
+      navigate('/thank-you');
+    }, 3000);
   };
 
   const handlePaymentError = (error: string) => {
@@ -120,55 +123,74 @@ const Checkout = () => {
     setIsProcessing(false);
   };
 
-  const handlePaymentLinkSubmission = () => {
-    const paymentData: PaymentLinkData = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      company: formData.company,
-      message: formData.message,
-      amount: total,
-      orderBump: orderBump,
-    };
+  const handleRazorpayPayment = async () => {
+    try {
+      console.log('🚀 Initiating Razorpay payment...');
 
-    // Save pending order for ThankYou page to send email after Razorpay redirects back
-    sessionStorage.setItem(
-      "pendingOrder",
-      JSON.stringify({
-        ...paymentData,
-        totalInInr: convertedPrices.totalINR,
-        createdAt: Date.now(),
-      })
-    );
+      const paymentData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        message: formData.message,
+        amount: convertedPrices.totalINR,
+        orderBump: orderBump,
+      };
 
-    handlePaymentLinkClick(
-      paymentData,
-      defaultPaymentLinkConfig,
-      () => {
-        handlePaymentSuccess();
-        setIsProcessing(false);
-      },
-      handlePaymentError
-    );
-  };
+      await initiateRazorpayPayment(
+        paymentData,
+        (response: RazorpayResponse) => {
+          console.log('✅ Razorpay payment successful:', response);
+          handlePaymentSuccess({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          });
+        },
+        () => {
+          console.log('❌ Razorpay payment cancelled');
+          handlePaymentFailure();
+        }
+      );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsProcessing(true);
-
-    // Validate form
-    if (!formData.name || !formData.email || !formData.phone) {
+    } catch (error) {
+      console.error("Razorpay error:", error);
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
+        title: "Payment Error",
+        description: "Failed to initialize Razorpay. Please try again.",
         variant: "destructive",
       });
       setIsProcessing(false);
-      return;
     }
+  };
 
-    // Open Razorpay payment link and rely on redirect + ThankYou page to send emails
-    handlePaymentLinkSubmission();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+
+    try {
+      // Validate form
+      if (!formData.name || !formData.email || !formData.phone) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in all required fields.",
+          variant: "destructive",
+        });
+        setIsProcessing(false);
+        return;
+      }
+
+      // Process payment - only Razorpay now
+      await handleRazorpayPayment();
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      toast({
+        title: "Payment Error",
+        description: "Failed to process payment. Please try again.",
+        variant: "destructive",
+      });
+      setIsProcessing(false);
+    }
   };
 
   const handlePaymentFailure = () => {
