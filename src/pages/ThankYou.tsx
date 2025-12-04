@@ -13,7 +13,6 @@ const handleNavClick = (path: string) => {
 
 const ThankYou = () => {
   const [searchParams] = useSearchParams();
-  const [hasAccess, setHasAccess] = useState(false);
   const [showThankYouModal, setShowThankYouModal] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const navigate = useNavigate();
@@ -24,17 +23,9 @@ const ThankYou = () => {
     const email = searchParams.get('email');
 
     if (paymentId && email) {
-      // Store purchase session for download access
-      sessionStorage.setItem('purchaseSession', JSON.stringify({
-        email,
-        paymentId,
-        timestamp: Date.now()
-      }));
-      setHasAccess(true);
-
       toast({
         title: "Purchase Successful!",
-        description: "Your payment has been confirmed. You can now download your bundle.",
+        description: "Your payment has been confirmed. Your bundle will be sent to your email shortly.",
       });
 
       // Show thank you modal
@@ -106,13 +97,6 @@ const ThankYou = () => {
     }
   }, [searchParams]);
 
-  const handleDownloadAccess = () => {
-    if (hasAccess) {
-      navigate('/download');
-    } else {
-      navigate('/checkout');
-    }
-  };
   return (
     <>
       <Navbar />
@@ -145,41 +129,6 @@ const ThankYou = () => {
         {/* Hero Section */}
         <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-left">
-            {/* Download Access Section */}
-            {hasAccess && (
-              <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-xl sm:rounded-2xl p-6 sm:p-8 mb-8 sm:mb-12 relative z-10">
-                <div className="flex items-center gap-3 mb-4">
-                  <CheckCircle className="w-8 h-8 text-yellow-400 flex-shrink-0" />
-                  <h2 className="text-xl sm:text-2xl font-heading font-bold text-yellow-400">
-                    Payment Confirmed - Download Your Bundle
-                  </h2>
-                </div>
-                <p className="text-gray-300 mb-6">
-                  Thank you for your purchase! Your High-Ticket Sales Mastery bundle is ready for download.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 items-center">
-                  <Button
-                    onClick={handleDownloadAccess}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold text-lg px-6 py-3 w-full sm:w-auto"
-                  >
-                    <Download className="w-5 h-5 mr-2" />
-                    Download Complete Bundle (ZIP)
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                  <div className="text-sm text-gray-400 text-center sm:text-left">
-                    <p>✅ Complete ZIP bundle (12.5 MB)</p>
-                    <p>✅ All 16 files included</p>
-                    <p>✅ Both PDF and DOCX formats</p>
-                    <p>✅ Lifetime access to all updates</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Divider for separation */}
-            {hasAccess && (
-              <div className="border-t border-gray-800 mb-8 sm:mb-12"></div>
-            )}
             <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white mb-4 sm:mb-6 leading-tight">
               Stop Chasing Low-Ticket Clients.
               <br className="hidden sm:block" />
