@@ -135,6 +135,6 @@ export const markPaymentCompleted = (email: string, paymentId: string): void => 
  * Updated with actual Razorpay payment link
  */
 export const defaultPaymentLinkConfig: PaymentLinkConfig = {
-  standardBundleLink: 'https://rzp.io/rzp/Vs1st9B', // $147 payment link
-  bundleWithBumpLink: 'https://rzp.io/rzp/Vs1st9B', // Same link for now (can be updated later)
+  standardBundleLink: 'https://razorpay.me/@amithadevikalakuntla', // Main payment link
+  bundleWithBumpLink: 'https://razorpay.me/@amithadevikalakuntla', // Same link for now (can be split later)
 };
