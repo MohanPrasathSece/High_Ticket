@@ -64,7 +64,7 @@ const FinalCTASection = () => {
                 </p>
               </div>
               <CountdownTimer hours={2} minutes={47} seconds={33} />
-              <p className="text-slate-400 mt-4">Price jumps from $147 to $497 when timer hits zero</p>
+              <p className="text-slate-400 mt-4">Price jumps from $897 to $497 when timer hits zero</p>
             </div>
           </div>
 
@@ -105,7 +105,7 @@ const FinalCTASection = () => {
                 ))}
               </div>
               <div className="mt-6 bg-slate-800/50 rounded-xl p-4 text-center">
-                <div className="text-2xl font-heading font-bold text-gold">$147</div>
+                <div className="text-2xl font-heading font-bold text-gold">$897</div>
                 <p className="text-slate-400 font-body">One-time investment</p>
               </div>
             </div>
@@ -134,7 +134,7 @@ const FinalCTASection = () => {
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-8">
                   <div className="text-center">
-                    <div className="text-4xl font-heading font-bold text-gold mb-2">$147</div>
+                    <div className="text-4xl font-heading font-bold text-gold mb-2">$897</div>
                     <p className="text-slate-400 font-body">Today Only</p>
                   </div>
                   <div className="text-center">
@@ -152,7 +152,7 @@ const FinalCTASection = () => {
                     <div className="flex flex-col items-center gap-1.5 text-center w-full">
                       <div className="flex items-center gap-2 justify-center">
                         <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
-                        <span className="font-bold text-sm sm:text-base md:text-lg">Get Access $147</span>
+                        <span className="font-bold text-sm sm:text-base md:text-lg">Get Access $897</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-300 font-normal">
                         <span>(~₹12,201)</span>

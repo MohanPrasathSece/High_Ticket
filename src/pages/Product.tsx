@@ -136,7 +136,7 @@ const Product = () => {
                     You get lifetime access to all materials and downloads.
                   </p>
                   <div className="flex items-baseline gap-3 mb-2">
-                    <span className="text-3xl sm:text-4xl font-bold text-yellow-400">$147</span>
+                    <span className="text-3xl sm:text-4xl font-bold text-yellow-400">$897</span>
                     <span className="text-gray-500 line-through text-base">$350+</span>
                   </div>
                   <p className="text-sm text-gray-400 mb-2">
@@ -152,7 +152,7 @@ const Product = () => {
                 <div className="w-full md:w-auto md:text-right">
                   <Link to="/checkout">
                     <Button className="w-full md:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-base px-6 py-3 rounded-lg inline-flex items-center justify-center">
-                      Get Instant Access — $147
+                      Get Instant Access — $897
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>

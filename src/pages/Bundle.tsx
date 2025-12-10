@@ -82,7 +82,7 @@ const Bundle = () => {
               {/* Price and Features */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <div className="flex items-center gap-2 text-yellow-400">
-                  <span className="text-2xl font-bold">$147</span>
+                  <span className="text-2xl font-bold">$897</span>
                   <span className="text-gray-400 line-through">$350+</span>
                 </div>
                 <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-2 text-gray-300 text-center">
@@ -96,7 +96,7 @@ const Bundle = () => {
               <div className="mb-8">
                 <Link to="/checkout" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm sm:text-lg px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all transform hover:scale-105 whitespace-normal h-auto">
-                    Get Bundle $147
+                    Get Bundle $897
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                   </Button>
                 </Link>
@@ -246,7 +246,7 @@ const Bundle = () => {
             <div className="text-center mt-12 bg-gray-800 border border-gray-700 rounded-xl p-8">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
                 <div className="text-gray-400 line-through text-2xl">Total Value: $350+</div>
-                <span className="text-yellow-400 text-3xl font-bold">Today: $147</span>
+                <span className="text-yellow-400 text-3xl font-bold">Today: $897</span>
               </div>
               <Link to="/checkout">
                 <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-lg px-8 py-4 rounded-lg transition-all transform hover:scale-105">
@@ -328,7 +328,7 @@ const Bundle = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
                   <div className="flex items-center gap-2 text-yellow-400">
-                    <span className="text-2xl font-bold">$147</span>
+                    <span className="text-2xl font-bold">$897</span>
                     <span className="text-gray-400 line-through">$350+</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-300">
@@ -338,7 +338,7 @@ const Bundle = () => {
                 </div>
                 <Link to="/checkout" className="w-full sm:w-auto">
                   <Button className="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black font-bold text-sm sm:text-lg px-4 sm:px-8 py-3 sm:py-4 rounded-lg transition-all transform hover:scale-105 whitespace-normal h-auto">
-                    Get the Bundle Now — $147
+                    Get the Bundle Now — $897
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2 flex-shrink-0" />
                   </Button>
                 </Link>

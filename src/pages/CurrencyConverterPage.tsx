@@ -21,7 +21,7 @@ const CurrencyConverterPage = () => {
             </div>
 
             <div className="bg-gray-900/80 border border-gray-800 rounded-2xl p-4 sm:p-6 shadow-xl">
-              <CurrencyConverter baseAmount={147} baseCurrency="USD" showConversionHistory compact={false} />
+              <CurrencyConverter baseAmount={897} baseCurrency="USD" showConversionHistory compact={false} />
             </div>
           </div>
         </section>

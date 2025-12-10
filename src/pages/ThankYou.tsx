@@ -144,7 +144,7 @@ const ThankYou = () => {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-start mb-8 sm:mb-12">
               <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
                 <Button variant="gold" size="lg" className="text-sm sm:text-base md:text-lg font-semibold w-full sm:w-auto px-4 sm:px-6 py-3">
-                  Get the Ultimate Bundle — $147
+                  Get the Ultimate Bundle — $897
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                 </Button>
               </Link>
@@ -300,11 +300,11 @@ const ThankYou = () => {
                   <span className="text-gray-400 line-through text-sm sm:text-base lg:text-lg">Total Value: $350+</span>
                 </div>
                 <div className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-yellow-400 mb-3 sm:mb-4">
-                  Today: $147
+                  Today: $897
                 </div>
                 <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
                   <Button variant="gold" size="lg" className="text-sm sm:text-base md:text-lg font-semibold w-full sm:w-auto px-4 sm:px-6 py-3">
-                    Get Instant Access — $147
+                    Get Instant Access — $897
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
                   </Button>
                 </Link>
@@ -386,12 +386,12 @@ const ThankYou = () => {
               with Complete Confidence?
             </h2>
             <p className="text-lg sm:text-xl text-gray-300 mb-6 sm:mb-8 px-2">
-              Get instant access to the complete high-ticket sales framework for only $147.
+              Get instant access to the complete high-ticket sales framework for only $897.
             </p>
 
             <Link to="/checkout" onClick={() => handleNavClick('/checkout')}>
               <Button variant="gold" size="lg" className="text-sm sm:text-base md:text-lg font-semibold w-full sm:w-auto px-4 sm:px-6 py-3 mb-6 sm:mb-8">
-                Get Instant Access — $147
+                Get Instant Access — $897
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
               </Button>
             </Link>

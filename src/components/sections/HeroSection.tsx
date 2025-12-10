@@ -80,7 +80,7 @@ const HeroSection = () => {
                     <div className="flex flex-col items-center gap-1.5 text-center w-full">
                       <div className="flex items-center gap-2 justify-center">
                         <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
-                        <span className="font-bold text-sm sm:text-base md:text-lg">Get Access $147</span>
+                        <span className="font-bold text-sm sm:text-base md:text-lg">Get Access $897</span>
                       </div>
                       <div className="text-xs sm:text-sm text-slate-300 font-normal">
                         (~₹12,201)
@@ -151,7 +151,7 @@ const HeroSection = () => {
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-slate-400 font-body mb-1">Today Only</p>
-                        <p className="text-2xl font-heading font-bold text-white">$147</p>
+                        <p className="text-2xl font-heading font-bold text-white">$897</p>
                       </div>
                     </div>
                   </div>

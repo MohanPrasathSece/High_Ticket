@@ -32,7 +32,7 @@ const Checkout = () => {
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
 
-  const basePrice = 147;
+  const basePrice = 897;
   const bumpPrice = 37;
   const total = orderBump ? basePrice + bumpPrice : basePrice;
 
@@ -466,7 +466,7 @@ const Checkout = () => {
                             Add Advanced Script Pack - Just $37
                           </h3>
                           <p className="text-sm text-gray-300 leading-relaxed break-words">
-                            Get 50+ proven outreach scripts for DM, email, and calls. Copy-paste these templates to book more meetings instantly. <span className="text-yellow-400 font-semibold">Normally $147.</span>
+                            Get 50+ proven outreach scripts for DM, email, and calls. Copy-paste these templates to book more meetings instantly. <span className="text-yellow-400 font-semibold">Normally $897.</span>
                           </p>
                         </div>
                       </label>

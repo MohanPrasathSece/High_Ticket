@@ -26,7 +26,7 @@ interface CurrencyConverterProps {
 }
 
 const CurrencyConverter = ({
-  baseAmount = 147,
+  baseAmount = 897,
   baseCurrency,
   onCurrencyChange,
   showConversionHistory = false,
