@@ -76,7 +76,7 @@ const BonusSection = () => {
               </p>
               <div className="flex items-baseline justify-center gap-4 mb-4">
                 <span className="text-4xl md:text-5xl font-heading font-bold text-foreground/50 line-through">
-                  $350+
+                  $1600
                 </span>
                 <span className="text-5xl md:text-6xl font-heading font-bold text-gradient-gold">
                   $147 <span className="text-sm text-foreground/60 font-normal">(~₹12,201)</span>

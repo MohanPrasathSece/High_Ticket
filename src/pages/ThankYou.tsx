@@ -297,7 +297,7 @@ const ThankYou = () => {
             <div className="text-center mt-8 sm:mt-12">
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8">
                 <div className="mb-3 sm:mb-4">
-                  <span className="text-gray-400 line-through text-sm sm:text-base lg:text-lg">Total Value: $350+</span>
+                  <span className="text-gray-400 line-through text-sm sm:text-base lg:text-lg">Total Value: $1600</span>
                 </div>
                 <div className="text-2xl sm:text-3xl md:text-4xl font-heading font-bold text-yellow-400 mb-3 sm:mb-4">
                   Today: $897

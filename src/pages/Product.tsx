@@ -137,7 +137,7 @@ const Product = () => {
                   </p>
                   <div className="flex items-baseline gap-3 mb-2">
                     <span className="text-3xl sm:text-4xl font-bold text-yellow-400">$897</span>
-                    <span className="text-gray-500 line-through text-base">$350+</span>
+                    <span className="text-gray-500 line-through text-base">$1600</span>
                   </div>
                   <p className="text-sm text-gray-400 mb-2">
                     Secure online payment is processed via Razorpay. International customers can pay with cards and their

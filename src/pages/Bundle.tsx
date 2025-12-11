@@ -83,7 +83,7 @@ const Bundle = () => {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
                 <div className="flex items-center gap-2 text-yellow-400">
                   <span className="text-2xl font-bold">$897</span>
-                  <span className="text-gray-400 line-through">$350+</span>
+                  <span className="text-gray-400 line-through">$1600</span>
                 </div>
                 <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-2 text-gray-300 text-center">
                   <span className="whitespace-nowrap"><span className="text-yellow-400">✓</span> Instant Access</span>
@@ -245,7 +245,7 @@ const Bundle = () => {
             {/* Value Proposition */}
             <div className="text-center mt-12 bg-gray-800 border border-gray-700 rounded-xl p-8">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-                <div className="text-gray-400 line-through text-2xl">Total Value: $350+</div>
+                <div className="text-gray-400 line-through text-2xl">Total Value: $1600</div>
                 <span className="text-yellow-400 text-3xl font-bold">Today: $897</span>
               </div>
               <Link to="/checkout">
@@ -329,7 +329,7 @@ const Bundle = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
                   <div className="flex items-center gap-2 text-yellow-400">
                     <span className="text-2xl font-bold">$897</span>
-                    <span className="text-gray-400 line-through">$350+</span>
+                    <span className="text-gray-400 line-through">$1600</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-300">
                     <span className="text-yellow-400">✓</span> Instant Access
