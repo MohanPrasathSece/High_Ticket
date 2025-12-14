@@ -9,6 +9,7 @@ import { Loader2, Lock, Shield, AlertCircle, CreditCard, ArrowRight, Star, Downl
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { handlePaymentLinkClick, defaultPaymentLinkConfig, PaymentLinkData } from "@/lib/razorpayPaymentLinks";
+import { handlePayPalPayment, PayPalOrderData } from "@/lib/paypal";
 import { sendOrderEmails } from "@/lib/emailService";
 import CurrencyConverter from "@/components/CurrencyConverter";
 import { detectUserCurrency, formatCurrency, convertCurrency } from "@/lib/currencyConverter";
@@ -27,7 +28,7 @@ const Checkout = () => {
     company: "",
     message: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay">("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "paypal">("razorpay");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
@@ -120,6 +121,60 @@ const Checkout = () => {
     setIsProcessing(false);
   };
 
+  const handlePayPalSubmission = () => {
+    const paypalData: PayPalOrderData = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      company: formData.company,
+      message: formData.message,
+      amount: total,
+      orderBump: orderBump,
+    };
+
+    // Save pending order for ThankYou page
+    sessionStorage.setItem(
+      "pendingPayPalOrder",
+      JSON.stringify({
+        ...paypalData,
+        totalInInr: convertedPrices.totalINR,
+        createdAt: Date.now(),
+      })
+    );
+
+    // Send order emails immediately for PayPal (similar to Razorpay flow)
+    const now = new Date();
+    const orderDetails = {
+      name: paypalData.name,
+      email: paypalData.email,
+      amount: paypalData.amount,
+      orderBump: paypalData.orderBump,
+      paymentId: `PENDING-PAYPAL-${now.getTime()}`,
+      orderId: undefined,
+      paymentMethod: "paypal",
+      date: now.toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    };
+
+    void sendOrderEmails(orderDetails).catch((err) => {
+      console.error("Email sending failed (PayPal flow)", err);
+    });
+
+    // Handle PayPal payment
+    handlePayPalPayment(
+      paypalData,
+      () => {
+        handlePaymentSuccess();
+        setIsProcessing(false);
+      },
+      (error: string) => {
+        handlePaymentError(error);
+      }
+    );
+  };
+
   const handlePaymentLinkSubmission = () => {
     const paymentData: PaymentLinkData = {
       name: formData.name,
@@ -190,8 +245,12 @@ const Checkout = () => {
       return;
     }
 
-    // Open Razorpay payment link and rely on redirect + ThankYou page to send emails
-    handlePaymentLinkSubmission();
+    // Handle payment based on selected method
+    if (paymentMethod === "razorpay") {
+      handlePaymentLinkSubmission();
+    } else if (paymentMethod === "paypal") {
+      handlePayPalSubmission();
+    }
   };
 
   const handlePaymentFailure = () => {
@@ -481,8 +540,8 @@ const Checkout = () => {
                             type="radio"
                             name="paymentMethod"
                             value="razorpay"
-                            checked={true}
-                            disabled
+                            checked={paymentMethod === "razorpay"}
+                            onChange={(e) => setPaymentMethod(e.target.value as "razorpay")}
                             className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
                           />
                           <div className="flex-1">
@@ -492,6 +551,25 @@ const Checkout = () => {
                             </div>
                             <div className="text-xs text-gray-400 mt-1">
                               Secure Payment • Cards, NetBanking • Instant processing
+                            </div>
+                          </div>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="paypal"
+                            checked={paymentMethod === "paypal"}
+                            onChange={(e) => setPaymentMethod(e.target.value as "paypal")}
+                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-medium">PayPal</span>
+                              <span className="px-2 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-400 font-semibold">Global</span>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">
+                              International Payments • Credit Cards • Secure checkout
                             </div>
                           </div>
                         </label>
@@ -536,6 +614,15 @@ const Checkout = () => {
                       </div>
                     </div>
 
+                    {/* PayPal Button Container */}
+                    {paymentMethod === "paypal" && (
+                      <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
+                        <div id="paypal-button-container" className="min-h-[50px] flex items-center justify-center">
+                          <div className="text-gray-400 text-sm">PayPal buttons will appear here...</div>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Submit Button */}
                     <Button
                       type="submit"
@@ -551,7 +638,12 @@ const Checkout = () => {
                         </>
                       ) : (
                         <>
-                          <span className="truncate">Get Instant Access — ${total}</span>
+                          <span className="truncate">
+                            {paymentMethod === "paypal" 
+                              ? `Pay with PayPal — $${total}` 
+                              : `Get Instant Access — $${total}`
+                            }
+                          </span>
                           <ArrowRight className="w-5 h-5 ml-2 flex-shrink-0" />
                         </>
                       )}

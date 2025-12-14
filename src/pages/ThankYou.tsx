@@ -3,9 +3,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, ArrowRight, Download, Mail, Shield, Clock, Star, Users } from "lucide-react";
+import { CheckCircle, ArrowRight, Download, Shield, Clock, Star, Users } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
-import { sendOrderEmails, OrderDetails } from "@/lib/emailService";
 
 const handleNavClick = (path: string) => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -14,7 +13,6 @@ const handleNavClick = (path: string) => {
 const ThankYou = () => {
   const [searchParams] = useSearchParams();
   const [showThankYouModal, setShowThankYouModal] = useState(false);
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,7 +23,7 @@ const ThankYou = () => {
     if (paymentId && email) {
       toast({
         title: "Purchase Successful!",
-        description: "Your payment has been confirmed. Your bundle will be sent to your email shortly.",
+        description: "Your payment has been confirmed. Thank you for your purchase.",
       });
 
       // Show thank you modal
@@ -36,60 +34,6 @@ const ThankYou = () => {
         setShowThankYouModal(false);
       }, 6000);
 
-      // Trigger email with bundle.zip if not already sent in this session
-      const emailSentKey = `emailSent_${email}_${paymentId}`;
-      const alreadySent = sessionStorage.getItem(emailSentKey);
-
-      if (!alreadySent) {
-        const pendingOrderRaw = sessionStorage.getItem('pendingOrder');
-        let orderDetails: OrderDetails | null = null;
-
-        if (pendingOrderRaw) {
-          try {
-            const pendingOrder = JSON.parse(pendingOrderRaw);
-            const now = new Date();
-            orderDetails = {
-              name: pendingOrder.name,
-              email: pendingOrder.email,
-              amount: pendingOrder.amount,
-              orderBump: pendingOrder.orderBump,
-              paymentId: paymentId,
-              orderId: undefined,
-              paymentMethod: "razorpay_payment_link",
-              date: now.toLocaleString("en-US", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              }),
-            };
-          } catch (e) {
-            console.error("Failed to parse pendingOrder from sessionStorage", e);
-          }
-        }
-
-        if (orderDetails) {
-          setIsSendingEmail(true);
-          void sendOrderEmails(orderDetails)
-            .then(() => {
-              sessionStorage.setItem(emailSentKey, 'true');
-              toast({
-                title: "Bundle Emailed",
-                description: "Your High-Ticket Sales Mastery bundle has been sent to your inbox.",
-              });
-            })
-            .catch((err) => {
-              console.error("Error sending order emails from ThankYou page", err);
-              toast({
-                title: "Email Error",
-                description: "We could not send the email automatically. Please contact support if you don't receive it.",
-                variant: "destructive",
-              });
-            })
-            .finally(() => {
-              setIsSendingEmail(false);
-            });
-        }
-
-      }
 
       return () => {
         clearTimeout(timer);
@@ -109,12 +53,7 @@ const ThankYou = () => {
               </div>
               <h2 className="text-2xl font-heading font-bold text-white mb-2">Thank You for Your Purchase!</h2>
               <p className="text-gray-300 mb-4">
-                Your payment was successful. Your High-Ticket Sales Mastery bundle will arrive in your inbox shortly.
-              </p>
-              <p className="text-sm text-gray-400 mb-4">
-                {isSendingEmail
-                  ? 'We are sending your bundle via email...'
-                  : 'If you do not see the email, please check your spam or promotions folder.'}
+                Your payment was successful. Thank you for your purchase.
               </p>
               <Button
                 variant="gold"
