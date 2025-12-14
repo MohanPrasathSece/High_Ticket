@@ -100,28 +100,9 @@ const Checkout = () => {
     { name: "Jennifer Park", text: "Marketing Consultant" },
   ];
 
-  const handlePaymentSuccess = () => {
-    console.log("✅ Payment link opened successfully");
 
-    // Show success message
-    toast({
-      title: "Payment Link Opened",
-      description:
-        "Complete your payment in the new Razorpay window. After successful payment you'll be redirected and complete your purchase.",
-    });
-  };
 
-  const handlePaymentError = (error: string) => {
-    console.error("❌ Payment link error:", error);
-    toast({
-      title: "Payment Error",
-      description: error,
-      variant: "destructive",
-    });
-    setIsProcessing(false);
-  };
 
-  
   const handleUPISubmission = () => {
     setShowUPIModal(true);
   };
@@ -194,56 +175,37 @@ const Checkout = () => {
     });
   };
 
-  const handlePaymentLinkSubmission = () => {
-    const paymentData: PaymentLinkData = {
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      company: formData.company,
-      message: formData.message,
-      amount: total,
-      orderBump: orderBump,
-    };
+  const handleBinanceSubmission = () => {
+    // Admin WhatsApp number - Replace with actual number
+    const adminPhone = "919003887019";
 
-    // Save pending order for ThankYou page to send email after Razorpay redirects back
-    sessionStorage.setItem(
-      "pendingOrder",
-      JSON.stringify({
-        ...paymentData,
-        totalInInr: convertedPrices.totalINR,
-        createdAt: Date.now(),
-      })
-    );
+    // Construct pre-filled message
+    const message = `Hello Admin,
+I would like to purchase the High-Ticket Sales Mastery Bundle via Binance/Crypto.
 
-    // Since Razorpay payment links can't reliably redirect back with confirmation,
-    // Bundle email functionality removed.
-    // NOTE: Bundle email functionality has been removed.
-    // but it guarantees delivery in this payment-link setup.
-    const now = new Date();
-    const orderDetails = {
-      name: paymentData.name,
-      email: paymentData.email,
-      amount: paymentData.amount,
-      orderBump: paymentData.orderBump,
-      paymentId: `PENDING-LINK-${now.getTime()}`,
-      orderId: undefined,
-      paymentMethod: "razorpay_payment_link",
-      date: now.toLocaleString("en-US", {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }),
-    };
+*Order Details:*
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Amount: $${total}
+Order Bump: ${orderBump ? "Yes" : "No"}
 
-    handlePaymentLinkClick(
-      paymentData,
-      defaultPaymentLinkConfig,
-      () => {
-        handlePaymentSuccess();
-        setIsProcessing(false);
-      },
-      handlePaymentError
-    );
+Please provide the wallet address (USDT TRC20/BEP20).`;
+
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(message);
+
+    // Open WhatsApp
+    window.open(`https://wa.me/${adminPhone}?text=${encodedMessage}`, '_blank');
+
+    setIsProcessing(false);
+    toast({
+      title: "Opening WhatsApp",
+      description: "Redirecting to admin chat for crypto payment...",
+    });
   };
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -261,10 +223,11 @@ const Checkout = () => {
     }
 
     // Handle payment based on selected method
-    if (paymentMethod === "razorpay") {
-      handlePaymentLinkSubmission();
-    } else if (paymentMethod === "upi") {
+    // Handle payment based on selected method
+    if (paymentMethod === "upi") {
       handleUPISubmission();
+    } else if (paymentMethod === "binance") {
+      handleBinanceSubmission();
     }
   };
 
@@ -432,7 +395,7 @@ const Checkout = () => {
                           </span>
                         </p>
                         <p>
-                          <span className="text-white font-medium">Charged Amount (INR via Razorpay):</span>{" "}
+                          <span className="text-white font-medium">Charged Amount (INR):</span>{" "}
                           <span className="font-semibold text-yellow-300">
                             ₹{convertedPrices.totalINR.toFixed(0)}
                           </span>
@@ -440,7 +403,7 @@ const Checkout = () => {
                       </div>
                       <p className="text-sm text-gray-300 mt-3">
                         Final amount may vary slightly based on your bank's exchange rate. All payments are securely
-                        processed in Indian Rupees (INR) via Razorpay and are accepted from all countries.
+                        processed in Indian Rupees (INR) and are accepted from all countries.
                       </p>
                     </div>
 
@@ -550,26 +513,8 @@ const Checkout = () => {
                     <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
                       <Label className="text-gray-300 font-body font-medium mb-3 block text-sm">Choose Payment Method</Label>
                       <div className="space-y-3">
-                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-yellow-400 bg-yellow-400/10">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="razorpay"
-                            checked={paymentMethod === "razorpay"}
-                            onChange={(e) => setPaymentMethod(e.target.value as "razorpay")}
-                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-white font-medium">Razorpay</span>
-                              <span className="px-2 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs text-yellow-400 font-semibold">Popular</span>
-                            </div>
-                            <div className="text-xs text-gray-400 mt-1">
-                              Secure Payment • Cards, NetBanking • Instant processing
-                            </div>
-                          </div>
-                        </label>
-                                                <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
                           <input
                             type="radio"
                             name="paymentMethod"
@@ -585,6 +530,26 @@ const Checkout = () => {
                             </div>
                             <div className="text-xs text-gray-400 mt-1">
                               QR Code Payment • Google Pay, PhonePe, Paytm • Instant transfer
+                            </div>
+                          </div>
+                        </label>
+
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-yellow-400/50 transition-colors">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="binance"
+                            checked={paymentMethod === "binance"}
+                            onChange={(e) => setPaymentMethod(e.target.value as "binance")}
+                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-medium">Binance / Crypto</span>
+                              <span className="px-2 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full text-xs text-yellow-400 font-semibold">International</span>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">
+                              Pay via USDT • Manual Verification • Contact Admin
                             </div>
                           </div>
                         </label>
@@ -656,7 +621,9 @@ const Checkout = () => {
                           <span className="truncate">
                             {paymentMethod === "upi"
                               ? `Generate UPI QR — $${total}`
-                              : `Get Instant Access — $${total}`
+                              : paymentMethod === 'binance'
+                                ? `Contact Admin via WhatsApp`
+                                : `Get Instant Access — $${total}`
                             }
                           </span>
                           <ArrowRight className="w-5 h-5 ml-2 flex-shrink-0" />
