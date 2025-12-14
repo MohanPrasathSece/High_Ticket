@@ -8,7 +8,6 @@ import { toast } from "@/components/ui/use-toast";
 import { Loader2, Lock, Shield, AlertCircle, CreditCard, ArrowRight, Star, Download, CheckCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
-import { handlePaymentLinkClick, defaultPaymentLinkConfig, PaymentLinkData } from "@/lib/razorpayPaymentLinks";
 import { UPIData } from "@/lib/upi";
 import UPIPaymentModal from "@/components/UPIPaymentModal";
 import CurrencyConverter from "@/components/CurrencyConverter";
@@ -28,7 +27,7 @@ const Checkout = () => {
     company: "",
     message: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "upi">("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"upi" | "binance">("upi");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
