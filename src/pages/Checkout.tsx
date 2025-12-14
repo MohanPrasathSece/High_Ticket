@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,6 @@ import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { handlePaymentLinkClick, defaultPaymentLinkConfig, PaymentLinkData } from "@/lib/razorpayPaymentLinks";
 import { handlePayPalPayment, PayPalOrderData } from "@/lib/paypal";
-import { sendOrderEmails } from "@/lib/emailService";
 import CurrencyConverter from "@/components/CurrencyConverter";
 import { detectUserCurrency, formatCurrency, convertCurrency } from "@/lib/currencyConverter";
 
@@ -101,7 +100,7 @@ const Checkout = () => {
   ];
 
   const handlePaymentSuccess = () => {
-    console.log("✅ Payment link opened successfully");
+    console.log("âœ… Payment link opened successfully");
 
     // Show success message
     toast({
@@ -112,7 +111,7 @@ const Checkout = () => {
   };
 
   const handlePaymentError = (error: string) => {
-    console.error("❌ Payment link error:", error);
+    console.error("âŒ Payment link error:", error);
     toast({
       title: "Payment Error",
       description: error,
@@ -254,7 +253,7 @@ const Checkout = () => {
   };
 
   const handlePaymentFailure = () => {
-    console.log("❌ Payment failed or cancelled");
+    console.log("âŒ Payment failed or cancelled");
     setIsProcessing(false);
     toast({
       title: "Payment Cancelled",
@@ -334,7 +333,7 @@ const Checkout = () => {
                 <div className="flex items-center gap-2 px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full w-fit max-w-full">
                   <AlertCircle className="w-4 h-4 text-yellow-400 flex-shrink-0" />
                   <span className="text-sm font-body font-semibold text-yellow-400 truncate sm:whitespace-normal sm:overflow-visible">
-                    ⚡ FLASH SALE - 75% OFF - Only 8 Spots Left!
+                    âš¡ FLASH SALE - 75% OFF - Only 8 Spots Left!
                   </span>
                 </div>
 
@@ -404,7 +403,7 @@ const Checkout = () => {
                   <div className="bg-gray-700 border border-gray-600 rounded-lg p-5 mb-6 space-y-4">
                     <div className="text-center">
                       <p className="text-base text-yellow-400 font-semibold mb-2">
-                        💰 Global Pricing & Currency
+                        ðŸ’° Global Pricing & Currency
                       </p>
                       <div className="space-y-2 text-sm text-gray-300">
                         <p>
@@ -419,7 +418,7 @@ const Checkout = () => {
                         <p>
                           <span className="text-white font-medium">Charged Amount (INR via Razorpay):</span>{" "}
                           <span className="font-semibold text-yellow-300">
-                            ₹{convertedPrices.totalINR.toFixed(0)}
+                            â‚¹{convertedPrices.totalINR.toFixed(0)}
                           </span>
                         </p>
                       </div>
@@ -550,7 +549,7 @@ const Checkout = () => {
                               <span className="px-2 py-1 bg-yellow-400/20 border border-yellow-400/40 rounded-full text-xs text-yellow-400 font-semibold">Popular</span>
                             </div>
                             <div className="text-xs text-gray-400 mt-1">
-                              Secure Payment • Cards, NetBanking • Instant processing
+                              Secure Payment â€¢ Cards, NetBanking â€¢ Instant processing
                             </div>
                           </div>
                         </label>
@@ -569,7 +568,7 @@ const Checkout = () => {
                               <span className="px-2 py-1 bg-blue-500/20 border border-blue-500/40 rounded-full text-xs text-blue-400 font-semibold">Global</span>
                             </div>
                             <div className="text-xs text-gray-400 mt-1">
-                              International Payments • Credit Cards • Secure checkout
+                              International Payments â€¢ Credit Cards â€¢ Secure checkout
                             </div>
                           </div>
                         </label>
@@ -607,7 +606,7 @@ const Checkout = () => {
                               {formatCurrency(convertedPrices.total, selectedCurrency)} ({selectedCurrency})
                             </div>
                             <div className="text-xs text-gray-200 font-medium mt-1">
-                              ₹{convertedPrices.totalINR.toFixed(0)} (charged in INR via Razorpay)
+                              â‚¹{convertedPrices.totalINR.toFixed(0)} (charged in INR via Razorpay)
                             </div>
                           </div>
                         </div>
@@ -640,8 +639,8 @@ const Checkout = () => {
                         <>
                           <span className="truncate">
                             {paymentMethod === "paypal" 
-                              ? `Pay with PayPal — $${total}` 
-                              : `Get Instant Access — $${total}`
+                              ? `Pay with PayPal â€” $${total}` 
+                              : `Get Instant Access â€” $${total}`
                             }
                           </span>
                           <ArrowRight className="w-5 h-5 ml-2 flex-shrink-0" />
@@ -723,13 +722,13 @@ const Checkout = () => {
 
               {downloadStatus === 'completed' && (
                 <div className="text-yellow-400 text-sm font-medium">
-                  ✓ Download started! Check your downloads folder.
+                  âœ“ Download started! Check your downloads folder.
                 </div>
               )}
 
               {downloadStatus === 'downloading' && (
                 <div className="text-yellow-400 text-sm font-medium">
-                  ⬇️ Download in progress...
+                  â¬‡ï¸ Download in progress...
                 </div>
               )}
             </div>
