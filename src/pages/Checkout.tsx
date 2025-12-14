@@ -10,6 +10,8 @@ import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/sections/FooterSection";
 import { handlePaymentLinkClick, defaultPaymentLinkConfig, PaymentLinkData } from "@/lib/razorpayPaymentLinks";
 import { handlePayPalPayment, PayPalOrderData } from "@/lib/paypal";
+import { UPIData } from "@/lib/upi";
+import UPIPaymentModal from "@/components/UPIPaymentModal";
 import CurrencyConverter from "@/components/CurrencyConverter";
 import { detectUserCurrency, formatCurrency, convertCurrency } from "@/lib/currencyConverter";
 
@@ -27,10 +29,11 @@ const Checkout = () => {
     company: "",
     message: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "paypal">("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "paypal" | "upi">("razorpay");
   const [showDownloadModal, setShowDownloadModal] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadStatus, setDownloadStatus] = useState<'preparing' | 'downloading' | 'completed'>('preparing');
+  const [showUPIModal, setShowUPIModal] = useState(false);
 
   const basePrice = 897;
   const bumpPrice = 37;
@@ -170,6 +173,78 @@ const Checkout = () => {
     );
   };
 
+  const handleUPISubmission = () => {
+    setShowUPIModal(true);
+  };
+
+  const handleUPISuccess = async (transactionId?: string) => {
+    setIsProcessing(false);
+    
+    // Send order emails for UPI payment
+    const now = new Date();
+    const orderDetails = {
+      name: formData.name,
+      email: formData.email,
+      amount: total,
+      orderBump: orderBump,
+      paymentId: transactionId || `UPI-${now.getTime()}`,
+      orderId: undefined,
+      paymentMethod: "upi",
+      date: now.toLocaleString("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+    };
+
+    try {
+      // Send confirmation emails
+      const response = await fetch('/.netlify/functions/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderDetails),
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ UPI Order emails sent successfully');
+        toast({
+          title: "Order Confirmed!",
+          description: "Payment successful and confirmation emails sent",
+        });
+        
+        // Navigate to thank you page
+        navigate('/thank-you');
+      } else {
+        console.error('❌ Failed to send UPI emails:', result);
+        toast({
+          title: "Email Error",
+          description: "Payment successful but confirmation emails failed. Please contact support.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error sending UPI emails:', error);
+      toast({
+        title: "Email Error",
+        description: "Payment successful but confirmation emails failed. Please contact support.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUPIFailure = () => {
+    setIsProcessing(false);
+    setShowUPIModal(false);
+    toast({
+      title: "Payment Cancelled",
+      description: "Your UPI payment was not completed. Please try again.",
+      variant: "destructive",
+    });
+  };
+
   const handlePaymentLinkSubmission = () => {
     const paymentData: PaymentLinkData = {
       name: formData.name,
@@ -241,6 +316,8 @@ const Checkout = () => {
       handlePaymentLinkSubmission();
     } else if (paymentMethod === "paypal") {
       handlePayPalSubmission();
+    } else if (paymentMethod === "upi") {
+      handleUPISubmission();
     }
   };
 
@@ -564,6 +641,25 @@ const Checkout = () => {
                             </div>
                           </div>
                         </label>
+                        <label className="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-600 hover:border-gray-500 transition-colors">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="upi"
+                            checked={paymentMethod === "upi"}
+                            onChange={(e) => setPaymentMethod(e.target.value as "upi")}
+                            className="w-4 h-4 text-yellow-400 focus:ring-yellow-400"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-medium">UPI</span>
+                              <span className="px-2 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-400 font-semibold">India</span>
+                            </div>
+                            <div className="text-xs text-gray-400 mt-1">
+                              QR Code Payment • Google Pay, PhonePe, Paytm • Instant transfer
+                            </div>
+                          </div>
+                        </label>
                       </div>
                     </div>
 
@@ -632,6 +728,8 @@ const Checkout = () => {
                           <span className="truncate">
                             {paymentMethod === "paypal" 
                               ? `Pay with PayPal — $${total}` 
+                              : paymentMethod === "upi"
+                              ? `Generate UPI QR — $${total}`
                               : `Get Instant Access — $${total}`
                             }
                           </span>
@@ -727,6 +825,23 @@ const Checkout = () => {
           </div>
         </div>
       )}
+
+      {/* UPI Payment Modal */}
+      <UPIPaymentModal
+        isOpen={showUPIModal}
+        onClose={() => setShowUPIModal(false)}
+        paymentData={{
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          message: formData.message,
+          amount: total,
+          orderBump: orderBump,
+        }}
+        onSuccess={handleUPISuccess}
+        onFailure={handleUPIFailure}
+      />
     </>
   );
 };

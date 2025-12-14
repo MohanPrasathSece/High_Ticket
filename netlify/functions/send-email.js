@@ -85,7 +85,7 @@ function generateCustomerEmail(orderDetails) {
                         <p><strong>Order ID:</strong> ${orderDetails.orderId || 'N/A'}</p>
                         <p><strong>Payment ID:</strong> ${orderDetails.paymentId}</p>
                         <p><strong>Amount:</strong> $${orderDetails.amount}</p>
-                        <p><strong>Payment Method:</strong> ${orderDetails.paymentMethod || 'N/A'}</p>
+                        <p><strong>Payment Method:</strong> ${orderDetails.paymentMethod === 'upi' ? 'UPI (QR Code)' : orderDetails.paymentMethod || 'N/A'}</p>
                         <p><strong>Date:</strong> ${orderDetails.date}</p>
                         ${orderDetails.orderBump ? '<p><strong>Order Bump:</strong> Script Pack Added</p>' : ''}
                     </div>
@@ -146,7 +146,7 @@ function generateAdminEmail(orderDetails) {
                         <p><strong>Order ID:</strong> ${orderDetails.orderId || 'N/A'}</p>
                         <p><strong>Payment ID:</strong> ${orderDetails.paymentId}</p>
                         <p><strong>Amount:</strong> $${orderDetails.amount}</p>
-                        <p><strong>Payment Method:</strong> ${orderDetails.paymentMethod || 'N/A'}</p>
+                        <p><strong>Payment Method:</strong> ${orderDetails.paymentMethod === 'upi' ? 'UPI (QR Code)' : orderDetails.paymentMethod || 'N/A'}</p>
                         <p><strong>Date:</strong> ${orderDetails.date}</p>
                         ${orderDetails.orderBump ? '<p><strong>Order Bump:</strong> Yes ($37)</p>' : ''}
                     </div>
