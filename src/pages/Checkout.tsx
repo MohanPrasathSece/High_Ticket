@@ -107,7 +107,7 @@ const Checkout = () => {
     toast({
       title: "Payment Link Opened",
       description:
-        "Complete your payment in the new Razorpay window. After successful payment you'll be redirected and receive your bundle via email.",
+        "Complete your payment in the new Razorpay window. After successful payment you'll be redirected and complete your purchase.",
     });
   };
 
@@ -197,8 +197,8 @@ const Checkout = () => {
     );
 
     // Since Razorpay payment links can't reliably redirect back with confirmation,
-    // we send the bundle email immediately after opening the payment link.
-    // NOTE: This means a user could technically get the bundle without completing payment,
+    // Bundle email functionality removed.
+    // NOTE: Bundle email functionality has been removed.
     // but it guarantees delivery in this payment-link setup.
     const now = new Date();
     const orderDetails = {
