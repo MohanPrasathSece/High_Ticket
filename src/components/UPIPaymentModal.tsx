@@ -45,11 +45,11 @@ const UPIPaymentModal: React.FC<UPIPaymentModalProps> = ({
         businessName: 'High-Ticket Sales Mastery',
         amount: amountInINR,
         orderId: orderId,
-        transactionNote: paymentData.orderBump 
-          ? 'Ultimate Bundle + Advanced Scripts' 
+        transactionNote: paymentData.orderBump
+          ? 'Ultimate Bundle + Advanced Scripts'
           : 'Ultimate High-Ticket Sales Bundle',
       };
-      
+
       const params = new URLSearchParams({
         pa: upiOptions.upiId,
         pn: upiOptions.businessName,
@@ -57,7 +57,7 @@ const UPIPaymentModal: React.FC<UPIPaymentModalProps> = ({
         cu: 'INR',
         tn: upiOptions.orderId,
       });
-      
+
       const upiUrl = `upi://pay?${params.toString()}`;
       setUpiUrl(upiUrl);
     } catch (error) {
@@ -98,7 +98,7 @@ const UPIPaymentModal: React.FC<UPIPaymentModalProps> = ({
     setTimeout(() => {
       setIsVerifying(false);
       setPaymentStatus('completed');
-      
+
       toast({
         title: "Payment Successful!",
         description: "Your UPI payment has been verified successfully",
@@ -106,7 +106,7 @@ const UPIPaymentModal: React.FC<UPIPaymentModalProps> = ({
 
       // Send confirmation emails and complete order
       onSuccess(transactionId);
-      
+
       // Close modal after success
       setTimeout(() => {
         onClose();
@@ -144,10 +144,10 @@ const UPIPaymentModal: React.FC<UPIPaymentModalProps> = ({
               <div className="space-y-4">
                 <div className="text-center">
                   <div className="bg-white p-4 rounded-lg inline-block">
-                    <img 
-                      src={paymentData.orderBump ? "/addon.jpg" : "/standard.jpg"} 
-                      alt="UPI Payment QR Code" 
-                      className="w-48 h-48 mx-auto"
+                    <img
+                      src={paymentData.orderBump ? "/addon.jpg" : "/standard.jpg"}
+                      alt="UPI Payment QR Code"
+                      className="w-72 h-72 mx-auto"
                     />
                   </div>
                   <p className="text-sm text-gray-400 mt-2">
@@ -193,7 +193,7 @@ const UPIPaymentModal: React.FC<UPIPaymentModalProps> = ({
                   </div>
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
 
           {/* Payment Verification Section */}
