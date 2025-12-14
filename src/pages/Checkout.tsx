@@ -587,21 +587,14 @@ Please provide the wallet address (USDT TRC20/BEP20).`;
                               {formatCurrency(convertedPrices.total, selectedCurrency)} ({selectedCurrency})
                             </div>
                             <div className="text-xs text-gray-200 font-medium mt-1">
-                              ₹{convertedPrices.totalINR.toFixed(0)} (charged in INR via Razorpay)
+                              ₹{convertedPrices.totalINR.toFixed(0)} (converted to INR)
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* PayPal Button Container */}
-                    {paymentMethod === "paypal" && (
-                      <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
-                        <div id="paypal-button-container" className="min-h-[50px] flex items-center justify-center">
-                          <div className="text-gray-400 text-sm">PayPal buttons will appear here...</div>
-                        </div>
-                      </div>
-                    )}
+
 
                     {/* Submit Button */}
                     <Button
