@@ -65,7 +65,7 @@ const Checkout = () => {
         const convertedBase = await convertCurrency(basePrice, 'USD', currency);
         const convertedBump = await convertCurrency(bumpPrice, 'USD', currency);
         const convertedTotal = await convertCurrency(total, 'USD', currency);
-        
+
         setConvertedPrices({
           basePrice: convertedBase,
           bumpPrice: convertedBump,
@@ -179,7 +179,7 @@ const Checkout = () => {
 
   const handleUPISuccess = async (transactionId?: string) => {
     setIsProcessing(false);
-    
+
     // Send order emails for UPI payment
     const now = new Date();
     const orderDetails = {
@@ -198,7 +198,7 @@ const Checkout = () => {
 
     try {
       // Send confirmation emails
-      const response = await fetch('/.netlify/functions/send-email', {
+      const response = await fetch('/api/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -207,14 +207,14 @@ const Checkout = () => {
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         console.log('✅ UPI Order emails sent successfully');
         toast({
           title: "Order Confirmed!",
           description: "Payment successful and confirmation emails sent",
         });
-        
+
         // Navigate to thank you page
         navigate('/thank-you');
       } else {
@@ -726,11 +726,11 @@ const Checkout = () => {
                       ) : (
                         <>
                           <span className="truncate">
-                            {paymentMethod === "paypal" 
-                              ? `Pay with PayPal — $${total}` 
+                            {paymentMethod === "paypal"
+                              ? `Pay with PayPal — $${total}`
                               : paymentMethod === "upi"
-                              ? `Generate UPI QR — $${total}`
-                              : `Get Instant Access — $${total}`
+                                ? `Generate UPI QR — $${total}`
+                                : `Get Instant Access — $${total}`
                             }
                           </span>
                           <ArrowRight className="w-5 h-5 ml-2 flex-shrink-0" />

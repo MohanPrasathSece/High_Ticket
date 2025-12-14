@@ -8,49 +8,53 @@ export function apiPlugin() {
     name: 'api-plugin',
     configureServer(server: ViteDevServer) {
       // Order confirmation email endpoint
-      server.middlewares.use('/api/send-email', async (req: any, res: any, next: any) => {
-        if (req.method !== 'POST') {
-          res.writeHead(405, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Method not allowed' }));
-          return;
-        }
+      server.middlewares.use(async (req: any, res: any, next: any) => {
+        if (req.url === '/api/send-email' || req.url === '/.netlify/functions/send-email') {
+          if (req.method !== 'POST') {
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
+            return;
+          }
 
-        try {
-          // Import the email handler
-          const { default: handler } = await import('./src/api/send-email.ts');
-          
-          // Create a Request object from the Node.js request
-          const body = await new Promise<string>((resolve, reject) => {
-            let data = '';
-            req.on('data', (chunk: any) => data += chunk);
-            req.on('end', () => resolve(data));
-            req.on('error', reject);
-          });
+          try {
+            // Import the email handler
+            const { default: handler } = await import('./src/api/send-email.ts');
 
-          const request = new Request('http://localhost:5173/api/send-email', {
-            method: 'POST',
-            headers: {
+            // Create a Request object from the Node.js request
+            const body = await new Promise<string>((resolve, reject) => {
+              let data = '';
+              req.on('data', (chunk: any) => data += chunk);
+              req.on('end', () => resolve(data));
+              req.on('error', reject);
+            });
+
+            const request = new Request('http://localhost:5173/api/send-email', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...req.headers,
+              },
+              body,
+            });
+
+            const response = await handler(request);
+            const responseData = await response.text();
+
+            res.writeHead(response.status, {
               'Content-Type': 'application/json',
-              ...req.headers,
-            },
-            body,
-          });
-
-          const response = await handler(request);
-          const responseData = await response.text();
-
-          res.writeHead(response.status, {
-            'Content-Type': 'application/json',
-            ...Object.fromEntries(response.headers.entries()),
-          });
-          res.end(responseData);
-        } catch (error) {
-          console.error('API Error:', error);
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ 
-            error: 'Internal server error',
-            details: error instanceof Error ? error.message : 'Unknown error'
-          }));
+              ...Object.fromEntries(response.headers.entries()),
+            });
+            res.end(responseData);
+          } catch (error) {
+            console.error('API Error:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+              error: 'Internal server error',
+              details: error instanceof Error ? error.message : 'Unknown error'
+            }));
+          }
+        } else {
+          next();
         }
       });
 
@@ -65,7 +69,7 @@ export function apiPlugin() {
         try {
           // Import the contact email handler
           const { default: handler } = await import('./src/api/send-contact-email.ts');
-          
+
           // Create a Request object from the Node.js request
           const body = await new Promise<string>((resolve, reject) => {
             let data = '';
@@ -94,7 +98,7 @@ export function apiPlugin() {
         } catch (error) {
           console.error('Contact API Error:', error);
           res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ 
+          res.end(JSON.stringify({
             error: 'Internal server error',
             details: error instanceof Error ? error.message : 'Unknown error'
           }));
